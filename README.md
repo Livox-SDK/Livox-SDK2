@@ -98,9 +98,9 @@ sudo make install
 
 - gcc  cross compiler need to support C ++11 standard
 
+## 3 Run Livox SDK Sample
 
-
-### 2.2.1 Ubuntu 20.04/18.04/16.04LTS
+### 3.1 Ubuntu 20.04/18.04/16.04LTS
 For Ubuntun 20.04/18.04/16.04 LTS, run the *`livox_lidar_quick_start`* if connect with the LiDAR unit(s):
 ```
 cd sample/livox_lidar_quick_start && ./livox_lidar_quick_start ../../sample/livox_lidar_quick_start/config.json
@@ -110,7 +110,7 @@ For how to configure the config.json file, pealse refer to [config.json](<https:
 
 
 
-### 2.2.2 Windows 10
+### 3.2 Windows 10
 After compiling the Livox SDK2 as shown in section 2.1.2, you can find`livox_lidar_quick_start.exe` in the Debug\sample folder, respectively, which can be run directly. 
 
 Then you can see the information as below:
@@ -119,7 +119,7 @@ Then you can see the information as below:
 
 For how to configure the config.json file, pealse refer to [config.json](<https://github.com/Livox-SDK/Livox-SDK2/wiki/hap-config-file-description>)
 
-### 2.2.3 ARM-Linux Cross Compile
+### 3.3 ARM-Linux Cross Compile
 
 For ARM-Linux 18.04,  run the *livox_lidar_quick_start* if connect with the LiDAR unit(s):
 
@@ -131,7 +131,7 @@ For how to configure the config.json file, pealse refer to [config.json](<https:
 
 
 
-# 3 Support
+# 4 Support
 
 You can get support from Livox with the following methods:
 * Send email to cs@livoxtech.com with a clear description of your problem and your setup
