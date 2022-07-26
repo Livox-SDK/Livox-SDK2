@@ -1,5 +1,3 @@
-[TOC]
-
 # 1 Introduction
 
 Livox SDK2 is the software development kit designed for all Livox products. It is developed based on C/C++ following Livox SDK2 Communication Protocol, and provides easy-to-use C style API. With Livox SDK2, users can quickly connect to Livox products and receive point cloud data. 
@@ -20,11 +18,11 @@ Livox SDK2 consists of Livox SDK2 communication protocol, Livox SDK2 core, Livox
 
 # 2 Livox SDK2 API
 
-Livox SDK2 API provides a set of C style functions which can be conveniently integrated in C/C++ programs. 
+Livox SDK2 API provides a set of C style functions which can be conveniently integrated in C/C++ programs, Please refer to sdk_core\include\livox_lidar_sdk.h<br>
 
-Please refer the below documents for further information : 
+Livox SDK communication protocol opens to all users. It is the communication protocol between user programs and livox product.The protocol consists of control commands and data format, please refer to the below documents for each product:<br>
+**HAP(TX/T1)**: [HAP SDK protocol](<https://github.com/Livox-SDK/Livox-SDK2/wiki/Livox-SDK-Communication-Protocol-HAP>)
 
-HAP(TX/T1): Please refer sdk_core\include\livox_lidar_sdk.h
 
 ## 2.1 Installation
 The installation procedures in Ubuntu 20.04 /Ubuntu 18.04/Ubuntu 16.04 LTS and Windows 10 are shown here as examples. 
