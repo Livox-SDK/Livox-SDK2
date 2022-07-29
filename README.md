@@ -80,7 +80,7 @@ Host machine requires install [CMake 3.0.0+](https://cmake.org/) . You can insta
 sudo apt install cmake
 ```
 
-#### Cross Compile Livox-SDK2
+#### Compile Livox-SDK2
 
 In the Livox SDK2 directory，run the following commands to cross compile the project:
 
@@ -94,7 +94,7 @@ sudo make install
 
 **Note:**
 
-- gcc  cross compiler need to support C ++11 standard
+- gcc compiler need to support C ++11 standard
 
 ## 3 Run Livox SDK Sample
 
@@ -117,7 +117,7 @@ Then you can see the information as below:
 
 For how to configure the config.json file, pealse refer to [config.json](<https://github.com/Livox-SDK/Livox-SDK2/wiki/hap-config-file-description>)
 
-### 3.3 ARM-Linux Cross Compile
+### 3.3 ARM-Linux Compile
 
 For ARM-Linux 18.04,  run the *livox_lidar_quick_start* if connect with the LiDAR unit(s):
 
