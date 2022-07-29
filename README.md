@@ -68,9 +68,9 @@ cmake .. -G "Visual Studio 16 2019" -A x64
 #### Compile Livox SDK2
 You can now compile the Livox SDK2 in Visual Studio.
 
-### 2.1.3 ARM-Linux Cross Compile
+### 2.1.3 ARM-Linux Compile
 
-The procedure of cross compile Livox-SDK2 in ARM-Linux are shown below.
+The procedure of compile Livox-SDK2 in ARM-Linux are shown below.
 
 #### Dependencies
 
