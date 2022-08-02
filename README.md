@@ -39,6 +39,7 @@ In the Livox SDK2 directory, run the following commands to compile the project:
 git clone https://github.com/Livox-SDK/Livox-SDK2.git
 cd ./Livox-SDK2/
 mkdir build
+cd build
 cmake .. && make -j
 sudo make install
 ```
@@ -88,6 +89,7 @@ In the Livox SDK2 directory，run the following commands to cross compile the pr
 git clone https://github.com/Livox-SDK/Livox-SDK2.git
 cd ./Livox-SDK2/
 mkdir build
+cd build
 cmake .. && make -j
 sudo make install
 ```
@@ -117,7 +119,7 @@ Then you can see the information as below:
 
 For how to configure the config.json file, pealse refer to [config.json](<https://github.com/Livox-SDK/Livox-SDK2/wiki/hap-config-file-description>)
 
-### 3.3 ARM-Linux Compile
+### 3.3 ARM-Linux
 
 For ARM-Linux 18.04,  run the *livox_lidar_quick_start* if connect with the LiDAR unit(s):
 
