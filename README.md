@@ -21,7 +21,11 @@ Livox SDK2 consists of Livox SDK2 communication protocol, Livox SDK2 core, Livox
 Livox SDK2 API provides a set of C style functions which can be conveniently integrated in C/C++ programs, Please refer to sdk_core\include\livox_lidar_sdk.h<br>
 
 Livox SDK communication protocol opens to all users. It is the communication protocol between user programs and livox product.The protocol consists of control commands and data format, please refer to the below documents for each product:<br>
-**HAP(TX/T1)**: [HAP SDK protocol](<https://github.com/Livox-SDK/Livox-SDK2/wiki/Livox-SDK-Communication-Protocol-HAP>)
+**HAP(TX/T1)**: 
+
+​    [HAP SDK protocol](<https://github.com/Livox-SDK/Livox-SDK2/wiki/Livox-SDK-Communication-Protocol-HAP>)(中文)
+
+​    [HAP SDK protocol](<https://github.com/Livox-SDK/Livox-SDK2/wiki/Livox-SDK-Communication-Protocol-HAP(English)>)(English)
 
 
 ## 2.1 Installation
