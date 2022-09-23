@@ -115,13 +115,23 @@ For how to configure the config.json file, pealse refer to [config.json](<https:
 
 
 ### 3.2 Windows 10
-After compiling the Livox SDK2 as shown in section 2.1.2, you can find`livox_lidar_quick_start.exe` in the Debug\sample folder, respectively, which can be run directly. 
+After compiling the Livox SDK2 as shown in section 2.1.2, you can find`livox_lidar_quick_start.exe` in the Debug\sample folder, respectively, 
+
+Select the the path of the livox_lidar_quick_start.exe file and find the path of the config.json file(such as `..\..\..\..\sample\livox_lidar_quick_start\config.json`) , then run the command:  
+
+```
+.\livox_lidar_quick_start.exe ..\..\..\..\sample\livox_lidar_quick_start\config.json
+```
 
 Then you can see the information as below:
 
 ![](doc/images/sdk_init.png)
 
 For how to configure the config.json file, pealse refer to [config.json](<https://github.com/Livox-SDK/Livox-SDK2/wiki/hap-config-file-description>)
+
+
+
+**Note** : in the example, the path of the config.json file is`..\..\..\..\sample\livox_lidar_quick_start\config.json`, please input the right path
 
 ### 3.3 ARM-Linux
 
