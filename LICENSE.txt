@@ -1,0 +1,309 @@
+﻿The following portions of the LIVOX’s Livox SDK2 (“Software” referred to in the terms below) are made available to you under the terms of the MIT License. A copy of the MIT license is provided below and is also available at https://opensource.org/licenses/MIT.
+
+Livox-SDK2
+├── CMakeLists.txt
+├── include
+│   ├── livox_lidar_api.h
+│   ├── livox_lidar_cfg.h
+│   └── livox_lidar_def.h
+├── LICENSE.txt
+├── sample
+│   ├── CMakeLists.txt
+│   └── livox_lidar_quick_start
+│       ├── CMakeLists.txt
+│       ├── config.json
+│       ├── hap_config.json
+│       ├── main.cpp
+│       └── mid360_config.json
+└── sdk_core
+    ├── base
+    │   ├── command_callback.h
+    │   ├── io_loop.cpp
+    │   ├── io_loop.h
+    │   ├── io_thread.cpp
+    │   ├── io_thread.h
+    │   ├── logging.cpp
+    │   ├── logging.h
+    │   ├── multiple_io
+    │   │   ├── multiple_io_base.cpp
+    │   │   ├── multiple_io_base.h
+    │   │   ├── multiple_io_epoll.cpp
+    │   │   ├── multiple_io_epoll.h
+    │   │   ├── multiple_io_factory.h
+    │   │   ├── multiple_io_kqueue.cpp
+    │   │   ├── multiple_io_kqueue.h
+    │   │   ├── multiple_io_poll.cpp
+    │   │   ├── multiple_io_poll.h
+    │   │   ├── multiple_io_select.cpp
+    │   │   └── multiple_io_select.h
+    │   ├── network
+    │   │   ├── network_util.h
+    │   │   ├── unix
+    │   │   │   └── network_util.cpp
+    │   │   └── win
+    │   │       └── network_util.cpp
+    │   ├── noncopyable.h
+    │   ├── thread_base.cpp
+    │   ├── thread_base.h
+    │   └── wake_up
+    │       ├── unix
+    │       │   └── wake_up_pipe.cpp
+    │       ├── wake_up_pipe.h
+    │       └── win
+    │           └── wake_up_pipe.cpp
+    ├── CMakeLists.txt
+    ├── comm
+    │   ├── comm_port.cpp
+    │   ├── comm_port.h
+    │   ├── CRC
+    │   │   ├── Crc_Cfg.cpp
+    │   │   ├── Crc_Cfg.h
+    │   │   ├── Crc.cpp
+    │   │   └── Crc.h
+    │   ├── define.h
+    │   ├── generate_seq.cpp
+    │   ├── generate_seq.h
+    │   ├── protocol.h
+    │   ├── sdk_protocol.cpp
+    │   └── sdk_protocol.h
+    ├── command_handler
+    │   ├── build_request.cpp
+    │   ├── build_request.h
+    │   ├── command_handler.h
+    │   ├── command_impl.cpp
+    │   ├── command_impl.h
+    │   ├── general_command_handler.cpp
+    │   ├── general_command_handler.h
+    │   ├── hap_command_handler.cpp
+    │   ├── hap_command_handler.h
+    │   ├── mid360_command_handler.cpp
+    │   ├── mid360_command_handler.h
+    │   ├── pa_command_handler.cpp
+    │   ├── pa_command_handler.h
+    │   ├── parse_lidar_state_info.cpp
+    │   └── parse_lidar_state_info.h
+    ├── data_handler
+    │   ├── data_handler.cpp
+    │   └── data_handler.h
+    ├── device_manager.cpp
+    ├── device_manager.h
+    ├── livox_lidar_sdk.cpp
+    ├── params_check.cpp
+    ├── params_check.h
+    ├── parse_cfg_file.cpp
+    └── parse_cfg_file.h
+    
+---------------------------------------------------------------
+
+The MIT License (MIT)
+
+Copyright (c) 2022 Livox. All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+===============================================================
+
+LIVOX’s Livox-SDK2 uses unmodified source code of RapidJSON (https://github.com/Tencent/rapidjson), which is also licensed under MIT license. A copy of the MIT license is provided below and is also available at https://opensource.org/licenses/MIT.
+
+Livox-SDK2
+── 3rdparty
+│   └── rapidjson
+│       ├── allocators.h
+│       ├── cursorstreamwrapper.h
+│       ├── document.h
+│       ├── encodedstream.h
+│       ├── encodings.h
+│       ├── error
+│       │   ├── en.h
+│       │   └── error.h
+│       ├── filereadstream.h
+│       ├── filewritestream.h
+│       ├── fwd.h
+│       ├── internal
+│       │   ├── biginteger.h
+│       │   ├── clzll.h
+│       │   ├── diyfp.h
+│       │   ├── dtoa.h
+│       │   ├── ieee754.h
+│       │   ├── itoa.h
+│       │   ├── meta.h
+│       │   ├── pow10.h
+│       │   ├── regex.h
+│       │   ├── stack.h
+│       │   ├── strfunc.h
+│       │   ├── strtod.h
+│       │   └── swap.h
+│       ├── istreamwrapper.h
+│       ├── license.txt
+│       ├── memorybuffer.h
+│       ├── memorystream.h
+│       ├── msinttypes
+│       │   ├── inttypes.h
+│       │   └── stdint.h
+│       ├── ostreamwrapper.h
+│       ├── pointer.h
+│       ├── prettywriter.h
+│       ├── rapidjson.h
+│       ├── reader.h
+│       ├── schema.h
+│       ├── stream.h
+│       ├── stringbuffer.h
+│       └── writer.h
+
+---------------------------------------------------------------
+
+Tencent is pleased to support the open source community by making RapidJSON
+available.
+Copyright (C) 2015 THL A29 Limited, a Tencent company, and Milo Yip. All
+rights reserved.
+Licensed under the MIT License (the "License"); you may not use this file
+except in compliance with the License. You may obtain a copy of the License
+at http://opensource.org/licenses/MIT
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+
+=============================================================
+
+LIVOX’s Livox SDK uses unmodified libraries of spdlog(https://github.com/gabime/spdlog), which is licensed under MIT license. A copy of the MIT license is provided below and is also available at https://opensource.org/licenses/MIT.
+
+Livox-SDK2
+├── 3rdparty
+│   └── spdlog
+│       ├── LICENSE
+│       └── spdlog
+│           ├── async.h
+│           ├── async_logger.h
+│           ├── common.h
+│           ├── details
+│           │   ├── async_logger_impl.h
+│           │   ├── circular_q.h
+│           │   ├── console_globals.h
+│           │   ├── file_helper.h
+│           │   ├── fmt_helper.h
+│           │   ├── logger_impl.h
+│           │   ├── log_msg.h
+│           │   ├── mpmc_blocking_q.h
+│           │   ├── null_mutex.h
+│           │   ├── os.h
+│           │   ├── pattern_formatter.h
+│           │   ├── periodic_worker.h
+│           │   ├── registry.h
+│           │   └── thread_pool.h
+│           ├── fmt
+│           │   ├── bin_to_hex.h
+│           │   ├── bundled
+│           │   │   ├── chrono.h
+│           │   │   ├── color.h
+│           │   │   ├── core.h
+│           │   │   ├── format.h
+│           │   │   ├── format-inl.h
+│           │   │   ├── LICENSE.rst
+│           │   │   ├── locale.h
+│           │   │   ├── ostream.h
+│           │   │   ├── posix.h
+│           │   │   ├── printf.h
+│           │   │   ├── ranges.h
+│           │   │   └── time.h
+│           │   ├── fmt.h
+│           │   └── ostr.h
+│           ├── formatter.h
+│           ├── logger.h
+│           ├── sinks
+│           │   ├── android_sink.h
+│           │   ├── ansicolor_sink.h
+│           │   ├── base_sink.h
+│           │   ├── basic_file_sink.h
+│           │   ├── daily_file_sink.h
+│           │   ├── dist_sink.h
+│           │   ├── msvc_sink.h
+│           │   ├── null_sink.h
+│           │   ├── ostream_sink.h
+│           │   ├── rotating_file_sink.h
+│           │   ├── sink.h
+│           │   ├── stdout_color_sinks.h
+│           │   ├── stdout_sinks.h
+│           │   ├── syslog_sink.h
+│           │   └── wincolor_sink.h
+│           ├── spdlog.h
+│           ├── tweakme.h
+│           └── version.h
+
+---------------------------------------------------------------
+
+The MIT License (MIT)
+
+Copyright (c) 2016 Gabi Melman.                                       
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+===============================================================
+
+LIVOX’s Livox SDK uses modified libraries of FastCRC (https://github.com/FrankBoesing/FastCRC), which is licensed under MIT license. A copy of the MIT license is provided below and is also available at https://opensource.org/licenses/MIT.
+
+Livox-SDK2
+├── 3rdparty
+│   └── FastCRC
+│       ├── FastCRC.h
+│       ├── FastCRCsw.cpp
+│       ├── FastCRC_tables.hpp
+│       ├── LICENSE.md
+│       └── README.md
+
+---------------------------------------------------------------
+The MIT License (MIT)
+
+Copyright (c) 2016 Frank
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
