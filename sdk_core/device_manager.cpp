@@ -63,10 +63,12 @@ bool DeviceManager::Init(const std::string& host_ip, const LivoxLidarLoggerCfgIn
   host_ip_ = host_ip;
   comm_port_.reset(new CommPort());
 
-  std::shared_ptr<LivoxLidarLoggerCfg> lidar_logger_cfg_ptr;
-  lidar_logger_cfg_ptr->lidar_log_enable = log_cfg_info->lidar_log_enable;
-  lidar_logger_cfg_ptr->lidar_log_cache_size = log_cfg_info->lidar_log_cache_size;
-  lidar_logger_cfg_ptr->lidar_log_path = log_cfg_info->lidar_log_path;
+  std::shared_ptr<LivoxLidarLoggerCfg> lidar_logger_cfg_ptr(new LivoxLidarLoggerCfg());
+  if (log_cfg_info != nullptr) {
+    lidar_logger_cfg_ptr->lidar_log_enable = log_cfg_info->lidar_log_enable;
+    lidar_logger_cfg_ptr->lidar_log_cache_size = log_cfg_info->lidar_log_cache_size;
+    lidar_logger_cfg_ptr->lidar_log_path = log_cfg_info->lidar_log_path;
+  }
 
   if (!LoggerManager::GetInstance().Init(lidar_logger_cfg_ptr)) {
     LOG_ERROR("Logger manager init failed.");
