@@ -31,7 +31,7 @@ Livox SDK2 communication protocol opens to all users. It is the communication pr
 
 **Mid-360**:
 
-* [Mid-360 Communication protocol](https://livox-wiki-en.readthedocs.io/zh_CN/latest/tutorials/new_product/mid360/mid360.html) 
+* [Mid-360 Communication protocol](https://livox-wiki-cn.readthedocs.io/zh_CN/latest/tutorials/new_product/mid360/mid360.html) (中文)
 
 
 ## Installation
