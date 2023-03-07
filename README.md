@@ -8,13 +8,17 @@ Livox SDK2 consists of [Livox SDK2 core code](sdk_core/), [Livox SDK2 APIs](incl
 
 ### Prerequisites
 
-* x86
-    * Ubuntu 20.04 / Ubuntu 18.04
+* OS:
+  * Linux: Ubuntu 18.04 / 20.04, ...
+  * Windows 10 / 11
 
-* Windows 10 & Visual Studio 2019
-* Compiler supporting C++11
+* Tools:
+  * compilers that support C++11
+  * cmake 3.0+
 
-* ARM: to be suppoted soon
+* Arch:
+  * x86
+  * ARM
 
 ### Livox SDK2 API
 
