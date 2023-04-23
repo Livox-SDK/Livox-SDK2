@@ -37,7 +37,7 @@
 namespace livox {
 namespace lidar {
 
-#pragma pack(1)
+
 
 const uint16_t KDefaultTimeOut = 1000;
 static const uint32_t kMaxCommandBufferSize = 1400;
@@ -87,6 +87,8 @@ typedef struct {
   uint64_t lidar_log_cache_size;
   std::string lidar_log_path;
 } LivoxLidarLoggerCfg;
+
+#pragma pack(1)
 
 typedef enum {
   /**

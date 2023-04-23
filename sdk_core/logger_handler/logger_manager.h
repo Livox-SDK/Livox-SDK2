@@ -40,7 +40,6 @@
 namespace livox {
 namespace lidar {
 
-#pragma pack(1)
 
 typedef struct {
   std::string sn;
