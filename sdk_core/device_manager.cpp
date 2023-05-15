@@ -96,7 +96,6 @@ bool DeviceManager::Init(const std::string& host_ip, const LivoxLidarLoggerCfgIn
   }
 
   detection_thread_ = std::make_shared<std::thread>(&DeviceManager::DetectionLidars, this);
-  is_stop_detection_.store(false);
   return true;
 }
 
@@ -425,6 +424,7 @@ bool DeviceManager::CreateDataSocketAndAddDelegate(const std::string& host_ip, c
 }
 
 void DeviceManager::DetectionLidars() {
+  is_stop_detection_.store(false);
   while (!is_stop_detection_) {
     Detection();
     std::this_thread::sleep_for(std::chrono::seconds(1));
