@@ -34,14 +34,13 @@ namespace lidar {
 class IOThread : public ThreadBase {
  public:
   IOThread() : loop_(nullptr) {}
+  virtual ~IOThread();
   bool Init(bool enable_timer = true, bool enable_wake = true);
-  void Join();
-  void Uninit();
-
-  std::weak_ptr<IOLoop> loop() { return loop_; }
+  std::weak_ptr<IOLoop> GetLoop() { return loop_; }
   void ThreadFunc();
 
  private:
+  void Uninit();
   std::shared_ptr<IOLoop> loop_;
 };
 

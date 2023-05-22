@@ -25,10 +25,11 @@
 #include "livox_lidar_def.h"
 #include "livox_lidar_api.h"
 
-#ifdef WIN32
-#include <windows.h>
+#ifdef _WIN32
+#include <winsock.h>
 #else
 #include <unistd.h>
+#include <arpa/inet.h>
 #endif
 
 #include <stdio.h>
@@ -129,11 +130,11 @@ void QueryInternalInfoCallback(livox_status status, uint32_t handle,
   uint16_t off = 0;
   for (uint8_t i = 0; i < response->param_num; ++i) {
     LivoxLidarKeyValueParam* kv = (LivoxLidarKeyValueParam*)&response->data[off];
-    if (kv->key == kKeyLidarPointDataHostIPCfg) {
+    if (kv->key == kKeyLidarPointDataHostIpCfg) {
       memcpy(host_point_ipaddr, &(kv->value[0]), sizeof(uint8_t) * 4);
       memcpy(&(host_point_port), &(kv->value[4]), sizeof(uint16_t));
       memcpy(&(lidar_point_port), &(kv->value[6]), sizeof(uint16_t));
-    } else if (kv->key == kKeyLidarImuHostIPCfg) {
+    } else if (kv->key == kKeyLidarImuHostIpCfg) {
       memcpy(host_imu_ipaddr, &(kv->value[0]), sizeof(uint8_t) * 4);
       memcpy(&(host_imu_data_port), &(kv->value[4]), sizeof(uint16_t));
       memcpy(&(lidar_imu_data_port), &(kv->value[6]), sizeof(uint16_t));
@@ -156,6 +157,8 @@ void LidarInfoChangeCallback(const uint32_t handle, const LivoxLidarInfo* info, 
     return;
   } 
   printf("LidarInfoChangeCallback Lidar handle: %u SN: %s\n", handle, info->sn);
+  
+  // set the work mode to kLivoxLidarNormal, namely start the lidar
   SetLivoxLidarWorkMode(handle, kLivoxLidarNormal, WorkModeCallback, nullptr);
 
   QueryLivoxLidarInternalInfo(handle, QueryInternalInfoCallback, nullptr);
@@ -167,6 +170,14 @@ void LidarInfoChangeCallback(const uint32_t handle, const LivoxLidarInfo* info, 
   // SetLivoxLidarLidarIp(handle, &lidar_ip_info, SetIpInfoCallback, nullptr);
 }
 
+void LivoxLidarPushMsgCallback(const uint32_t handle, const uint8_t dev_type, const char* info, void* client_data) {
+   struct in_addr tmp_addr;
+   tmp_addr.s_addr = handle;  
+   std::cout << "handle: " << handle << ", ip: " << inet_ntoa(tmp_addr) << ", push msg info: " << std::endl;
+   std::cout << info << std::endl;
+  return;
+}
+
 int main(int argc, const char *argv[]) {
   if (argc != 2) {
     printf("Params Invalid, must input config path.\n");
@@ -174,17 +185,27 @@ int main(int argc, const char *argv[]) {
   }
   const std::string path = argv[1];
 
+  // REQUIRED, to init Livox SDK2
   if (!LivoxLidarSdkInit(path.c_str())) {
     printf("Livox Init Failed\n");
     LivoxLidarSdkUninit();
     return -1;
   }
+  
+  // REQUIRED, to get point cloud data via 'PointCloudCallback'
   SetLivoxLidarPointCloudCallBack(PointCloudCallback, nullptr);
+  
+  // OPTIONAL, to get imu data via 'ImuDataCallback'
+  // some lidar types DO NOT contain an imu component
   SetLivoxLidarImuDataCallback(ImuDataCallback, nullptr);
+  
+  SetLivoxLidarInfoCallback(LivoxLidarPushMsgCallback, nullptr);
+  
+  // REQUIRED, to get a handle to targeted lidar and set its work mode to NORMAL
   SetLivoxLidarInfoChangeCallback(LidarInfoChangeCallback, nullptr);
 
 #ifdef WIN32
-  Sleep(3000);
+  Sleep(300000);
 #else
   sleep(300);
 #endif

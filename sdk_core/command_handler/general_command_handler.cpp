@@ -24,13 +24,14 @@
 
 #include "general_command_handler.h"
 
+#include <iostream>
+
 #include "livox_lidar_def.h"
 #include "command_handler/command_handler.h"
 #include "command_handler/hap_command_handler.h"
 #include "command_handler/mid360_command_handler.h"
 #include "command_handler/pa_command_handler.h"
 #include "logger_handler/logger_manager.h"
-
 #include "base/logging.h"
 #include "comm/protocol.h"
 #include "comm/generate_seq.h"
@@ -612,9 +613,9 @@ bool GeneralCommandHandler::GetQueryLidarInternalInfoKeys(const uint32_t handle,
       std::set<ParamKeyName> tmp_key_sets {
         kKeyPclDataType,
         kKeyPatternMode,
-        kKeyLidarIPCfg,
-        kKeyLidarPointDataHostIPCfg,
-        kKeyLidarImuHostIPCfg,
+        kKeyLidarIpCfg,
+        kKeyLidarPointDataHostIpCfg,
+        kKeyLidarImuHostIpCfg,
         kKeyInstallAttitude,
         kKeyWorkMode,
         kKeyImuDataEn,
@@ -632,16 +633,16 @@ bool GeneralCommandHandler::GetQueryLidarInternalInfoKeys(const uint32_t handle,
       std::set<ParamKeyName> tmp_key_sets {
         kKeyPclDataType,
         kKeyPatternMode,
-        kKeyLidarIPCfg,
-        kKeyStateInfoHostIPCfg,
-        kKeyLidarPointDataHostIPCfg,
-        kKeyLidarImuHostIPCfg,
+        kKeyLidarIpCfg,
+        kKeyStateInfoHostIpCfg,
+        kKeyLidarPointDataHostIpCfg,
+        kKeyLidarImuHostIpCfg,
         kKeyInstallAttitude,
         kKeyFovCfg0,
         kKeyFovCfg1,
-        kKeyRoiEn,
+        kKeyFovCfgEn,
         kKeyDetectMode,
-        kKeyFuncIOCfg,
+        kKeyFuncIoCfg,
         kKeyWorkMode,
         kKeyImuDataEn,
         kKeySn,
@@ -665,8 +666,8 @@ bool GeneralCommandHandler::GetQueryLidarInternalInfoKeys(const uint32_t handle,
       return true;
     } else if (dev_type == kLivoxLidarTypePA) {
       std::set<ParamKeyName> tmp_key_sets {
-        kKeyLidarIPCfg,
-        kKeyLidarPointDataHostIPCfg
+        kKeyLidarIpCfg,
+        kKeyLidarPointDataHostIpCfg
       };
       key_sets.swap(tmp_key_sets);
       return true;

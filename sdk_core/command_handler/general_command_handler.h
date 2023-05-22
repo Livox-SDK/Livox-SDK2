@@ -106,7 +106,6 @@ class GeneralCommandHandler : public noncopyable {
   bool GetQueryLidarInternalInfoKeys(const uint32_t handle, std::set<ParamKeyName>& key_sets);
   livox_status LivoxLidarRequestReset(uint32_t handle, LivoxLidarResetCallback cb, void* client_data);
   static void QueryFwTypeCallback(livox_status status, uint32_t handle, LivoxLidarDiagInternalInfoResponse* response, void* client_data);
-  livox_status LivoxLidarStartLogger(const uint32_t handle, uint8_t log_type, LivoxLidarLoggerStartCallback cb, void* client_data);
  private:
   void CreateCommandHandler(const uint8_t dev_type);
   bool VerifyNetSegment(const DetectionData* detection_data);

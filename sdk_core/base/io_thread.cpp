@@ -27,25 +27,21 @@
 namespace livox {
 namespace lidar {
 
-void IOThread::Join() {
-  ThreadBase::Join();
+IOThread::~IOThread() {
+  Join();
+  Uninit();
 }
 
 void IOThread::ThreadFunc() {
   if (!loop_) {
     return;
   }
-
   while (!IsQuit()) {
     loop_->Loop();
   }
 }
 
 bool IOThread::Init(bool enable_timer, bool enable_wake) {
-  if (!ThreadBase::Init()) {
-    return false;
-  }
-
   loop_ = std::make_shared<IOLoop>(enable_timer, enable_wake);
   return loop_->Init();
 }
@@ -54,7 +50,6 @@ void IOThread::Uninit() {
   if (loop_) {
     loop_->Uninit();
   }
-  ThreadBase::Uninit();
 }
 
 } // namespace lidar

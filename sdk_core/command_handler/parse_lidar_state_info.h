@@ -28,6 +28,7 @@
 #include <memory>
 #include <map>
 #include <mutex>
+#include <set>
 
 #include "comm/define.h"
 #include "comm/protocol.h"
@@ -47,12 +48,13 @@ class ParseLidarStateInfo {
  public:
   static bool Parse(const CommPacket& packet, std::string& info);
  private:
-  static bool ParseStateInfo(const CommPacket& packet, DirectLidarStateInfo& info);
-  static void ParseLidarIpAddr(const CommPacket& packet, uint16_t& off, DirectLidarStateInfo& info);
-  static void ParseStateInfoHostIPCfg(const CommPacket& packet, uint16_t& off, DirectLidarStateInfo& info);
-  static void ParsePointCloudHostIpCfg(const CommPacket& packet, uint16_t& off, DirectLidarStateInfo& info);
-  static void ParseImuDataHostIpCfg(const CommPacket& packet, uint16_t& off, DirectLidarStateInfo& info);
-  static void LivoxLidarStateInfoToJson(const DirectLidarStateInfo& info, std::string& lidar_info);
+  static bool ParseStateInfo(const CommPacket& packet, DirectLidarStateInfo& info, std::set<ParamKeyName>& key_mask);
+  static void ParseLidarIpAddr(const CommPacket& packet, uint16_t off, DirectLidarStateInfo& info);
+  static void ParseStateInfoHostIPCfg(const CommPacket& packet, uint16_t off, DirectLidarStateInfo& info);
+  static void ParsePointCloudHostIpCfg(const CommPacket& packet, uint16_t off, DirectLidarStateInfo& info);
+  static void ParseImuDataHostIpCfg(const CommPacket& packet, uint16_t off, DirectLidarStateInfo& info);
+  static void ParseIpCfg(const CommPacket& packet, uint16_t off, LivoxIpCfg& cfg);
+  static void LivoxLidarStateInfoToJson(const DirectLidarStateInfo& info, const std::set<ParamKeyName>& key_mask, std::string& lidar_info);
 };
 
 } // namespace livox

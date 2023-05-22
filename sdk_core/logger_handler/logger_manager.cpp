@@ -31,8 +31,11 @@
 #include "comm/protocol.h"
 #include "comm/generate_seq.h"
 
-#include <iostream>
+#include <map>
 #include <iomanip>
+#include <chrono>
+#include <iostream>
+#include <condition_variable>
 #ifdef WIN32
 #include<winsock2.h>
 #else
@@ -42,12 +45,20 @@
 namespace livox {
 namespace lidar {
 
+constexpr uint16_t kMaxExceptionLogCachSizeMb = 200;
+constexpr uint16_t kExceptionLogCacheRatio = 1;
+constexpr uint16_t kRealtimeLogCacheRatio = 3;
+
 LoggerManager::LoggerManager()
     : log_enable_(false),
-      log_save_path_(""),
-      max_cache_size_(200 * 1024 * 1024),
-      current_cache_size_(0),
-      comm_port_(nullptr) {
+      log_cycle_delete_enable_(false),
+      log_root_path_(""),
+      max_realtimelog_cache_size_(150 * 1024 * 1024),
+      max_exceptionlog_cache_size_(50 * 1024 * 1024),
+      comm_port_(nullptr),
+      cycle_delete_thread_(nullptr),
+      cond_(false),
+      is_destroy_(false) {
 }
 
 LoggerManager& LoggerManager::GetInstance() {
@@ -56,43 +67,64 @@ LoggerManager& LoggerManager::GetInstance() {
 }
 
 bool LoggerManager::Init(std::shared_ptr<LivoxLidarLoggerCfg> lidar_logger_cfg_ptr) {
-  if (lidar_logger_cfg_ptr == nullptr) {
+  if (lidar_logger_cfg_ptr == nullptr || 
+      lidar_logger_cfg_ptr->lidar_log_enable == false) {
     log_enable_.store(false);
     return true;
   }
-
-  if (lidar_logger_cfg_ptr->lidar_log_enable == false) {
+  
+  // Do not enable the log when the allocated space is equal to 0 MB and greater than 1000 TB
+  if (lidar_logger_cfg_ptr->lidar_log_cache_size == 0 || lidar_logger_cfg_ptr->lidar_log_cache_size > 1000000000) {
     log_enable_.store(false);
     return true;
   }
 
   comm_port_.reset(new CommPort());
   log_enable_.store(lidar_logger_cfg_ptr->lidar_log_enable);
-  if (lidar_logger_cfg_ptr->lidar_log_cache_size != 0) {
-    max_cache_size_ = (lidar_logger_cfg_ptr->lidar_log_cache_size) * 1024 * 1024;
+
+  // Only 200 MB of exception log space will be allocated.
+  if (lidar_logger_cfg_ptr->lidar_log_cache_size > 
+      kMaxExceptionLogCachSizeMb * (kExceptionLogCacheRatio + kRealtimeLogCacheRatio) / kExceptionLogCacheRatio) {
+    max_exceptionlog_cache_size_ = kMaxExceptionLogCachSizeMb * 1024 * 1024;
+    max_realtimelog_cache_size_ = (lidar_logger_cfg_ptr->lidar_log_cache_size - kMaxExceptionLogCachSizeMb) * 1024 * 1024;
+  } else {
+    max_realtimelog_cache_size_ = (lidar_logger_cfg_ptr->lidar_log_cache_size * kRealtimeLogCacheRatio /
+                                   (kExceptionLogCacheRatio + kRealtimeLogCacheRatio)) * 1024 * 1024;
+    max_exceptionlog_cache_size_ = (lidar_logger_cfg_ptr->lidar_log_cache_size * kExceptionLogCacheRatio /
+                                    (kExceptionLogCacheRatio + kRealtimeLogCacheRatio)) * 1024 * 1024;
   }
- 
+
   if (!InitLoggerSavePath(lidar_logger_cfg_ptr->lidar_log_path)) {
+    LOG_ERROR("Init logger save path failed");
     return false;
   }
+  
+  if (!ChangeHiddenFiles(lidar_logger_cfg_ptr->lidar_log_path)) {
+    LOG_ERROR("Change hidden files to normal files failed");
+  }
+
+  log_cycle_delete_enable_.store(true);
+  cycle_delete_thread_ = std::make_shared<std::thread>(&LoggerManager::CycleDelete, this);
+
   return true;
 }
 
-bool LoggerManager::InitLoggerSavePath(std::string log_save_path) {
-  std::string log_root_dir = log_save_path + (log_save_path.back() == '/' ? "" : "/") + "lidar_log/";
+bool LoggerManager::GetLogEnable() {
+  if (log_enable_.load() == true) {
+    return true;
+  }
+  return false;
+}
+
+bool LoggerManager::InitLoggerSavePath(std::string log_root_path) {
+  std::string log_root_dir = log_root_path + (log_root_path.back() == '/' ? "" : "/") + "lidar_log/";
   if (access(log_root_dir.c_str(), 0) != EXIT_SUCCESS) {
     if (!MakeDirecotory(log_root_dir)) {
       LOG_ERROR("Can't Create Dir {}", log_root_dir);
       return false;
     }
-  } else {
-    current_cache_size_ = GetDirTotalSize(log_root_dir);
-    LOG_INFO("Livox Lidar Log Cache Size: {}, Max Cache Size: {}", (long long int)current_cache_size_, (long long int)max_cache_size_);
-    if (current_cache_size_ >= max_cache_size_) {
-      return false;
-    }
   }
-  log_save_path_ = log_root_dir;
+  log_root_path_ = log_root_dir;
   return true;
 }
 
@@ -116,7 +148,7 @@ void LoggerManager::RemoveDevice(const uint32_t handle) {
 }
 
 livox_status LoggerManager::StartLogger(const uint32_t handle, const LivoxLidarLogType log_type,
-    LivoxLidarLoggerStartCallback cb, void* client_data) {
+    LivoxLidarLoggerCallback cb, void* client_data) {
   if (log_enable_.load() == false) {
     LOG_INFO("Disable logger.");
     return kLivoxLidarStatusSuccess;  
@@ -156,63 +188,59 @@ void LoggerManager::Handler(uint32_t handle, uint16_t lidar_port, uint8_t *buf, 
 
   auto data = static_cast<DeviceLoggerFilePushRequest*>((void *)packet.data);
   uint8_t flag = data->flag;
+
+    if (flag & 1) {
+    DeviceLoggerFilePushReponse response = {};
+    response.ret_code = 0x00;
+    response.log_type = data->log_type;
+    response.file_index = data->file_index;
+    response.trans_index = data->trans_index;
+
+    GeneralCommandHandler::GetInstance().SendLoggerCommand(handle, kCommandIDLidarPushLog,
+                                                           (uint8_t*)&response, sizeof(DeviceLoggerFilePushReponse),
+                                                           MakeCommandCallback<DeviceLoggerFilePushReponse>(nullptr, nullptr)); //Send ACK
+  }
+
   if (flag & (1 << 1)) {
     OnLoggerCreate(handle, data);
     return;
   }
 
   if (flag & (1 << 2)) {
-    OnLoggerStop(handle, data);
+    OnLoggerStopped(handle, data);
     return;
   }
+
   OnLoggerTransfer(handle, data);
 }
 
 void LoggerManager::OnLoggerCreate(const uint32_t handle, DeviceLoggerFilePushRequest* data) {
   if (handlers_.find(handle) == handlers_.end()) {
     if (devices_info_.find(handle) != devices_info_.end()) {
-      auto broadcast_code = devices_info_[handle].sn;
-      handlers_[handle] = std::make_shared<LoggerHandler>(log_save_path_, broadcast_code);
+      auto serial_num = devices_info_[handle].sn;
+      handlers_[handle] = std::make_shared<LoggerHandler>(log_root_path_, serial_num);
       handlers_[handle]->Init();
     }
   }
 
   auto & handler = handlers_[handle];
-
-  handler->CreateFile(data);
-
-  if (data->flag & 1) {
-    DeviceLoggerFilePushReponse response = {};
-    response.ret_code = 0x00;
-    response.log_type = data->log_type;
-    response.file_index = data->file_index;
-    response.trans_index = data->trans_index;
-
-    GeneralCommandHandler::GetInstance().SendLoggerCommand(handle,
-      kCommandIDLidarPushLog, (uint8_t*)&response, sizeof(DeviceLoggerFilePushReponse),
-      MakeCommandCallback<DeviceLoggerFilePushReponse>(nullptr, nullptr));
-  }
+  handler->StoreLogBag(data, static_cast<uint8_t>(Flag::kCreateFile));
 }
 
-void LoggerManager::OnLoggerStop(const uint32_t handle, DeviceLoggerFilePushRequest* data) {
+void LoggerManager::OnLoggerStopped(const uint32_t handle, DeviceLoggerFilePushRequest* data) {
   if (handlers_.find(handle) == handlers_.end()) {
     LOG_INFO("LogType: {} Stop! File doesn't create", (int)data->log_type);
     return;
   }
 
   auto & handler = handlers_[handle];
-  handler->StopFile(data);
 
-  if (data->flag & 1) {
-    DeviceLoggerFilePushReponse response = {};
-    response.ret_code = 0x00;
-    response.log_type = data->log_type;
-    response.file_index = data->file_index;
-    response.trans_index = data->trans_index;
+  handler->StoreLogBag(data, static_cast<uint8_t>(Flag::kEndFile));
 
-    GeneralCommandHandler::GetInstance().SendLoggerCommand(handle,
-      kCommandIDLidarPushLog, (uint8_t*)&response, sizeof(DeviceLoggerFilePushReponse),
-      MakeCommandCallback<DeviceLoggerFilePushReponse>(nullptr, nullptr));
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    cond_ = true;
+    cv_.notify_one();
   }
 }
 
@@ -223,33 +251,40 @@ void LoggerManager::OnLoggerTransfer(const uint32_t handle, DeviceLoggerFilePush
   }
   auto & handler = handlers_[handle];
 
-  if (!CheckAndUpdateCacheSize(data->data_length)) {
-    handler->StopFile(data);
-    return;
-  }
-
-  handler->WriteFile(data);
-
-  if (data->flag & 1) {
-    DeviceLoggerFilePushReponse response = {};
-    response.ret_code = 0x00;
-    response.log_type = data->log_type;
-    response.file_index = data->file_index;
-    response.trans_index = data->trans_index;
-
-    GeneralCommandHandler::GetInstance().SendLoggerCommand(handle, //Send ACK
-      kCommandIDLidarPushLog, (uint8_t*)&response, sizeof(DeviceLoggerFilePushReponse),
-      MakeCommandCallback<DeviceLoggerFilePushReponse>(nullptr, nullptr));
-  }
+  handler->StoreLogBag(data, static_cast<uint8_t>(Flag::kTransferData));
 }
 
-bool LoggerManager::CheckAndUpdateCacheSize(uint16_t data_length) {
-  LOG_INFO("current cache size: {}, max cache size: {}", current_cache_size_, max_cache_size_);
-  if (current_cache_size_ >= max_cache_size_) {
-    return false;
+void LoggerManager::CycleDelete() {
+  std::string realtime_log_save_path_ = log_root_path_ + (log_root_path_.back() == '/' ? "" : "/") + "type_0";
+  std::string exception_log_save_path_ = log_root_path_ + (log_root_path_.back() == '/' ? "" : "/") + "type_1";
+
+  while (log_cycle_delete_enable_.load()) {
+    std::unique_lock<std::mutex> lock(mutex_);
+    cv_.wait_for(lock, std::chrono::seconds(600), [&]{ return cond_; });
+
+    if (IsDirectoryExits(realtime_log_save_path_) && (GetDirTotalSize(realtime_log_save_path_) > max_realtimelog_cache_size_)) {
+      if (!GetFileNames(realtime_log_save_path_, realtime_files_)) {
+        LOG_ERROR("Can not get filenames in this directory: {}", realtime_log_save_path_);
+      }
+      while (GetDirTotalSize(realtime_log_save_path_) > max_realtimelog_cache_size_ && realtime_files_.begin() != realtime_files_.end()) {
+        remove((realtime_log_save_path_ + "/" + realtime_files_.begin()->second).c_str());
+        realtime_files_.erase(realtime_files_.begin());
+      }
+      realtime_files_.clear();
+    }
+
+    if (IsDirectoryExits(exception_log_save_path_) && GetDirTotalSize(exception_log_save_path_) > max_exceptionlog_cache_size_) {
+      if (!GetFileNames(exception_log_save_path_, exception_files_)) {
+        LOG_ERROR("Can not get filenames in this directory: {}", exception_log_save_path_);
+      }
+      while (GetDirTotalSize(exception_log_save_path_) > max_exceptionlog_cache_size_ && exception_files_.begin() != exception_files_.end()) {
+        remove((exception_log_save_path_ + "/" + exception_files_.begin()->second).c_str());
+        exception_files_.erase(exception_files_.begin());
+      }
+      exception_files_.clear();
+    }
+    cond_ = false;
   }
-  current_cache_size_ += data_length;
-  return true;
 }
 
 void LoggerManager::StopAllLogger() {
@@ -263,14 +298,17 @@ void LoggerManager::StopAllLogger() {
 }
 
 livox_status LoggerManager::StopLogger(const uint32_t handle, const LivoxLidarLogType log_type,
-    LivoxLidarLoggerStartCallback cb, void* client_data) {
+    LivoxLidarLoggerCallback cb, void* client_data) {
+
   LOG_INFO("Stop Logger handler: {}, log_type: {}", handle, log_type);
+
   EnableDeviceLoggerRequest enable_req = {};
   enable_req.log_type = log_type;
   enable_req.enable = false;
+
   return GeneralCommandHandler::GetInstance().SendLoggerCommand(handle, 
       kCommandIDLidarCollectionLog, (uint8_t*)&enable_req, sizeof(EnableDeviceLoggerRequest),
-      MakeCommandCallback<LivoxLidarLoggerResponse>(nullptr, nullptr));
+      MakeCommandCallback<LivoxLidarLoggerResponse>(cb, client_data));
 }
 
 void LoggerManager::LoggerStopCallback(livox_status status, uint32_t handle, LivoxLidarLoggerResponse* response, void* client_data) {
@@ -303,16 +341,34 @@ void LoggerManager::LoggerStopCallback(livox_status status, uint32_t handle, Liv
 }
 
 void LoggerManager::Destory() {
+  if(is_destroy_) {
+    return;
+  }
+  log_cycle_delete_enable_.store(false);
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    cond_ = true;
+    cv_.notify_one();
+  }
+
+  if (cycle_delete_thread_) {
+    cycle_delete_thread_->join();
+    cycle_delete_thread_ = nullptr;
+  }
+
   for (auto it = handlers_.begin(); it != handlers_.end(); ++it) {
     it->second->Destory();
   }
-  
+
   if (!handlers_.empty()) {
     handlers_.clear();
   }
 
   StopAllLogger();
   log_enable_.store(false);
+
+  ChangeHiddenFiles(log_root_path_);
+  is_destroy_.store(true);
 }
 
 LoggerManager::~LoggerManager() {

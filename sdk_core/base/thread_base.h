@@ -35,21 +35,17 @@ namespace lidar {
 class ThreadBase : public noncopyable {
  public:
   ThreadBase();
-  virtual ~ThreadBase() {}
+  virtual ~ThreadBase();
   virtual void ThreadFunc() = 0;
-  bool Init();
-  virtual void Uninit();
-  virtual bool Start();
-  virtual void Join();
-  void Quit() { quit_ = true; }
+  bool Start();
   bool IsQuit() { return quit_; }
 
  protected:
-  std::shared_ptr<std::thread> thread_;
-  std::atomic_bool quit_;
+  void Join();
   
  private:
-  std::atomic_bool is_thread_valid_;
+  std::atomic_bool quit_;
+  std::shared_ptr<std::thread> thread_;
 };
 
 } //namespace lidar

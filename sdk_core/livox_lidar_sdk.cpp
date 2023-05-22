@@ -110,10 +110,12 @@ void LivoxLidarSdkUninit() {
   if (!is_initialized) {
     return;
   }
+
+  LoggerManager::GetInstance().Destory();
+  // The reason for using WSACleanup() after previous statement is that Destory() still needs to send socket messages.
 #ifdef WIN32
     WSACleanup();
 #endif // WIN32
-  LoggerManager::GetInstance().Destory();
   DeviceManager::GetInstance().Destory();
   DataHandler::GetInstance().Destory();
   GeneralCommandHandler::GetInstance().Destory();
@@ -259,6 +261,14 @@ livox_status SetLivoxLidarGlassHeat(uint32_t handle, LivoxLidarGlassHeat glass_h
   return CommandImpl::SetLivoxLidarGlassHeat(handle, glass_heat, cb, client_data);
 }
 
+livox_status StartForcedHeating(uint32_t handle, LivoxLidarAsyncControlCallback cb, void* client_data) {
+  return CommandImpl::StartForcedHeating(handle, cb, client_data);
+}
+
+livox_status StopForcedHeating(uint32_t handle, LivoxLidarAsyncControlCallback cb, void* client_data) {
+  return CommandImpl::StopForcedHeating(handle, cb, client_data);
+}
+
 livox_status EnableLivoxLidarImuData(uint32_t handle, LivoxLidarAsyncControlCallback cb, void* client_data) {
   return CommandImpl::EnableLivoxLidarImuData(handle, cb, client_data);
 }
@@ -295,6 +305,10 @@ void UpgradeLivoxLidars(const uint32_t* handle, const uint8_t lidar_num) {
   UpgradeManager::GetInstance().UpgradeLivoxLidars(handle, lidar_num);
 }
 
-livox_status LivoxLidarStartLogger(const uint32_t handle, const LivoxLidarLogType log_type, LivoxLidarLoggerStartCallback cb, void* client_data) {
+livox_status LivoxLidarStartLogger(const uint32_t handle, const LivoxLidarLogType log_type, LivoxLidarLoggerCallback cb, void* client_data) {
   return LoggerManager::GetInstance().StartLogger(handle, log_type, cb, client_data);
+}
+
+livox_status LivoxLidarStopLogger(const uint32_t handle, const LivoxLidarLogType log_type, LivoxLidarLoggerCallback cb, void* client_data) {
+  return LoggerManager::GetInstance().StopLogger(handle, log_type, cb, client_data);
 }

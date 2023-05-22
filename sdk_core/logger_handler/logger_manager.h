@@ -28,6 +28,7 @@
 #include <functional>
 #include <memory>
 #include <mutex>
+#include <condition_variable>
 
 #include "livox_lidar_def.h"
 #include "livox_lidar_api.h"
@@ -64,6 +65,8 @@ struct LogInfo {
   uint64_t total_log_size;
 };
 
+#pragma pack()
+
 class LoggerManager {
  private:
   LoggerManager();
@@ -75,41 +78,52 @@ class LoggerManager {
   static LoggerManager& GetInstance();
 
   bool Init(std::shared_ptr<LivoxLidarLoggerCfg> lidar_logger_cfg_ptr);
+  bool GetLogEnable();
   void AddDevice(const uint32_t handle, const DetectionData* detection_data);
   void RemoveDevice(const uint32_t handle);
   void Destory();
 
-  livox_status StartLogger(const uint32_t handle, const LivoxLidarLogType log_type, LivoxLidarLoggerStartCallback cb, void* client_data);
+  livox_status StartLogger(const uint32_t handle, const LivoxLidarLogType log_type, LivoxLidarLoggerCallback cb, void* client_data);
+  livox_status StopLogger(const uint32_t handle, const LivoxLidarLogType log_type, LivoxLidarLoggerCallback cb, void* client_data);
 
   void Handler(uint32_t handle, uint16_t lidar_port, uint8_t *buf, uint32_t buf_size);
   static void LoggerStopCallback(livox_status status, uint32_t handle, LivoxLidarLoggerResponse* response, void* client_data);
+
 private:
-  bool InitLoggerSavePath(std::string log_save_path);
+  bool InitLoggerSavePath(std::string log_root_path);
   void CreateDeviceDir(const uint32_t handle, const LidarDeviceInfo& device_info);
 
   void OnLoggerCreate(const uint32_t handle, DeviceLoggerFilePushRequest* data);
-  void OnLoggerStop(const uint32_t handle, DeviceLoggerFilePushRequest* data);
+  void OnLoggerStopped(const uint32_t handle, DeviceLoggerFilePushRequest* data);
   void OnLoggerTransfer(const uint32_t handle, DeviceLoggerFilePushRequest* data);
 
-  bool CheckAndUpdateCacheSize(uint16_t data_length);
+  void CycleDelete();
 
   void StopAllLogger();
-  livox_status StopLogger(const uint32_t handle, const LivoxLidarLogType log_type, LivoxLidarLoggerStartCallback cb, void* client_data);
 private:
   std::atomic<bool> log_enable_;
-  std::string log_save_path_;
-  uint64_t max_cache_size_;
-  uint64_t current_cache_size_;
+  std::atomic<bool> log_cycle_delete_enable_;
+  std::string log_root_path_;
+  uint64_t max_realtimelog_cache_size_;
+  uint64_t max_exceptionlog_cache_size_;
 
   std::unique_ptr<CommPort> comm_port_;
 
+  std::shared_ptr<std::thread> cycle_delete_thread_;
+  bool cond_;
+  std::mutex mutex_;
+  std::condition_variable cv_;
+
   std::map<uint32_t, LidarDeviceInfo> devices_info_;
   std::map<uint32_t, std::shared_ptr<LoggerHandler>> handlers_;
+
+  std::multimap<std::string, std::string> realtime_files_;
+  std::multimap<std::string, std::string> exception_files_;
+
+  std::atomic<bool> is_destroy_;
 };
 
 } // namespace lidar
 }  // namespace livox
-
-#pragma pack()
 
 #endif  // LIVOX_LOGGER_MANAGER_H_

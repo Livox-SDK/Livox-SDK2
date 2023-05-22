@@ -75,7 +75,7 @@ class HapCommandHandler : public CommandHandler {
 
   void OnCommand(uint32_t handle, const Command &command);
   void OnCommandAck(uint32_t handle, const Command &command);
-  void OnCommandCmd(uint32_t handle, const Command &command);
+  void OnCommandCmd(const uint32_t handle, const uint16_t lidar_port, const Command &command);
   bool IsStatusException(const Command &command);
   void QueryDiagnosisInfo(uint32_t handle);
   void OnLidarInfoChange(const Command &command);

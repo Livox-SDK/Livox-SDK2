@@ -121,7 +121,7 @@ int main(int argc, const char *argv[]) {
   }
 
 #ifdef WIN32
-  Sleep(3000000);
+  Sleep(3000000000);
 #else
   sleep(3000000);
 #endif

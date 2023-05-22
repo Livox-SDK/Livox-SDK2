@@ -49,7 +49,7 @@ bool BuildRequest::BuildUpdateViewLidarCfgRequest(const ViewLidarIpInfo& view_li
   req_len = sizeof(key_num) + sizeof(uint16_t);
 
   LivoxLidarKeyValueParam * point_kv = (LivoxLidarKeyValueParam *)&req_buf[req_len];
-  point_kv->key = static_cast<uint16_t>(kKeyLidarPointDataHostIPCfg);
+  point_kv->key = static_cast<uint16_t>(kKeyLidarPointDataHostIpCfg);
   point_kv->length = sizeof(uint8_t) * 8;
   HostIpInfoValue* host_point_ip_info_val = (HostIpInfoValue*)&point_kv->value;
   if (!InitHostIpAddr(view_lidar_info.host_ip, host_point_ip_info_val)) {
@@ -66,7 +66,7 @@ bool BuildRequest::BuildUpdateViewLidarCfgRequest(const ViewLidarIpInfo& view_li
   }
 
   LivoxLidarKeyValueParam * imu_kv = (LivoxLidarKeyValueParam *)&req_buf[req_len];
-  imu_kv->key = static_cast<uint16_t>(kKeyLidarImuHostIPCfg);
+  imu_kv->key = static_cast<uint16_t>(kKeyLidarImuHostIpCfg);
   imu_kv->length = sizeof(uint8_t) * 8;
   HostIpInfoValue* host_imu_ip_info_val = (HostIpInfoValue*)&imu_kv->value;
   if (!InitHostIpAddr(view_lidar_info.host_ip, host_imu_ip_info_val)) {
@@ -88,7 +88,7 @@ bool BuildRequest::BuildUpdateMid360LidarCfgRequest(const LivoxLidarCfg& lidar_c
   req_len = sizeof(key_num) + sizeof(uint16_t);
 
   LivoxLidarKeyValueParam * state_kv = (LivoxLidarKeyValueParam *)&req_buf[req_len];
-  state_kv->key = static_cast<uint16_t>(kKeyStateInfoHostIPCfg);
+  state_kv->key = static_cast<uint16_t>(kKeyStateInfoHostIpCfg);
   state_kv->length = sizeof(uint8_t) * 8;
   HostIpInfoValue* host_state_ip_info_val = (HostIpInfoValue*)&state_kv->value;
   if (!InitHostIpAddr(lidar_cfg.host_net_info.push_msg_ip, host_state_ip_info_val)) {
@@ -102,7 +102,7 @@ bool BuildRequest::BuildUpdateMid360LidarCfgRequest(const LivoxLidarCfg& lidar_c
   req_len += sizeof(LivoxLidarKeyValueParam) - sizeof(uint8_t) + sizeof(HostIpInfoValue);
 
   LivoxLidarKeyValueParam * point_kv = (LivoxLidarKeyValueParam *)&req_buf[req_len];
-  point_kv->key = static_cast<uint16_t>(kKeyLidarPointDataHostIPCfg);
+  point_kv->key = static_cast<uint16_t>(kKeyLidarPointDataHostIpCfg);
   point_kv->length = sizeof(uint8_t) * 8;
   HostIpInfoValue* host_point_ip_info_val = (HostIpInfoValue*)&point_kv->value;
   if (!InitHostIpAddr(lidar_cfg.host_net_info.point_data_ip, host_point_ip_info_val)) {
@@ -116,7 +116,7 @@ bool BuildRequest::BuildUpdateMid360LidarCfgRequest(const LivoxLidarCfg& lidar_c
   req_len += sizeof(LivoxLidarKeyValueParam) - sizeof(uint8_t) + sizeof(HostIpInfoValue);
 
   LivoxLidarKeyValueParam * imu_kv = (LivoxLidarKeyValueParam *)&req_buf[req_len];
-  imu_kv->key = static_cast<uint16_t>(kKeyLidarImuHostIPCfg);
+  imu_kv->key = static_cast<uint16_t>(kKeyLidarImuHostIpCfg);
   imu_kv->length = sizeof(uint8_t) * 8;
   HostIpInfoValue* host_imu_ip_info_val = (HostIpInfoValue*)&imu_kv->value;
   if (!InitHostIpAddr(lidar_cfg.host_net_info.imu_data_ip, host_imu_ip_info_val)) {
@@ -148,7 +148,7 @@ bool BuildRequest::BuildUpdateLidarCfgRequest(const LivoxLidarCfg& lidar_cfg,
   req_len = sizeof(key_num) + sizeof(uint16_t);
 
   LivoxLidarKeyValueParam * point_kv = (LivoxLidarKeyValueParam *)&req_buf[req_len];
-  point_kv->key = static_cast<uint16_t>(kKeyLidarPointDataHostIPCfg);
+  point_kv->key = static_cast<uint16_t>(kKeyLidarPointDataHostIpCfg);
   point_kv->length = sizeof(uint8_t) * 8;
   HostIpInfoValue* host_point_ip_info_val = (HostIpInfoValue*)&point_kv->value;
   if (!InitHostIpAddr(lidar_cfg.host_net_info.point_data_ip, host_point_ip_info_val)) {
@@ -176,7 +176,7 @@ bool BuildRequest::BuildUpdateLidarCfgRequest(const LivoxLidarCfg& lidar_cfg,
   }
 
   LivoxLidarKeyValueParam * imu_kv = (LivoxLidarKeyValueParam *)&req_buf[req_len];
-  imu_kv->key = static_cast<uint16_t>(kKeyLidarImuHostIPCfg);
+  imu_kv->key = static_cast<uint16_t>(kKeyLidarImuHostIpCfg);
   imu_kv->length = sizeof(uint8_t) * 8;
   HostIpInfoValue* host_imu_ip_info_val = (HostIpInfoValue*)&imu_kv->value;
   if (!InitHostIpAddr(lidar_cfg.host_net_info.imu_data_ip, host_imu_ip_info_val)) {
@@ -209,7 +209,7 @@ bool BuildRequest::BuildSetLidarIPInfoRequest(const LivoxLidarIpInfo& lidar_ip_c
   req_len = sizeof(key_num) + sizeof(uint16_t);
 
   LivoxLidarKeyValueParam * kv = (LivoxLidarKeyValueParam *)&req_buf[req_len];
-  kv->key = static_cast<uint16_t>(kKeyLidarIPCfg);
+  kv->key = static_cast<uint16_t>(kKeyLidarIpCfg);
   kv->length = sizeof(uint8_t) * 12;
   LivoxLidarIpInfoValue* lidar_ip_val = (LivoxLidarIpInfoValue*)&kv->value;
   if (!InitLidarIpinfoVal(lidar_ip_config, lidar_ip_val)) {
@@ -228,7 +228,7 @@ bool BuildRequest::BuildSetHostStateInfoIPCfgRequest(const HostStateInfoIpInfo& 
   req_len = sizeof(key_num) + sizeof(uint16_t);
 
   LivoxLidarKeyValueParam * kv = (LivoxLidarKeyValueParam *)&req_buf[req_len];
-  kv->key = static_cast<uint16_t>(kKeyStateInfoHostIPCfg);
+  kv->key = static_cast<uint16_t>(kKeyStateInfoHostIpCfg);
   kv->length = sizeof(uint8_t) * 8;
   HostIpInfoValue* host_ip_info_val = (HostIpInfoValue*)&kv->value;
 
@@ -250,7 +250,7 @@ bool BuildRequest::BuildSetHostPointDataIPInfoRequest(const HostPointIPInfo& hos
   req_len = sizeof(key_num) + sizeof(uint16_t);
 
   LivoxLidarKeyValueParam * kv = (LivoxLidarKeyValueParam *)&req_buf[req_len];
-  kv->key = static_cast<uint16_t>(kKeyLidarPointDataHostIPCfg);
+  kv->key = static_cast<uint16_t>(kKeyLidarPointDataHostIpCfg);
   kv->length = sizeof(uint8_t) * 8;
   HostIpInfoValue* host_ip_info_val = (HostIpInfoValue*)&kv->value;
 
@@ -272,7 +272,7 @@ bool BuildRequest::BuildSetHostImuDataIPInfoRequest(const HostImuDataIPInfo& hos
   req_len = sizeof(key_num) + sizeof(uint16_t);
 
   LivoxLidarKeyValueParam * kv = (LivoxLidarKeyValueParam *)&req_buf[req_len];
-  kv->key = static_cast<uint16_t>(kKeyLidarImuHostIPCfg);
+  kv->key = static_cast<uint16_t>(kKeyLidarImuHostIpCfg);
   kv->length = sizeof(uint8_t) * 8;
   HostIpInfoValue* host_ip_info_val = (HostIpInfoValue*)&kv->value;
 

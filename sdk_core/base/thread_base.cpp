@@ -24,32 +24,37 @@
 
 #include "thread_base.h"
 #include <thread>
+#include <iostream>
 #include <memory>
 
 namespace livox {
 namespace lidar {
 
 
-ThreadBase::ThreadBase() : quit_(false), is_thread_valid_(false) {}
+ThreadBase::ThreadBase() : quit_(false) {}
 
 bool ThreadBase::Start() {
   quit_ = false;
   thread_ = std::make_shared<std::thread>(&ThreadBase::ThreadFunc, this);
-  is_thread_valid_ = true;
   return true;
+}
+
+ThreadBase::~ThreadBase() {
+  if (thread_) {
+    Join();
+  }
 }
 
 void ThreadBase::Join() {
-  if (is_thread_valid_) {
+  quit_ = true;
+  if (thread_ && thread_->joinable()) {
     thread_->join();
+    thread_ = nullptr;
+  } else {
+    std::cout << "failed to join thread, joinable: " 
+              << thread_->joinable() << std::endl;
+    thread_ = nullptr;
   }
- }
-
-bool ThreadBase::Init() {
-  return true;
-}
-
-void ThreadBase::Uninit() {
 }
 
 } // namespace lidar

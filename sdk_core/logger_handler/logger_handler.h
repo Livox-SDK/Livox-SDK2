@@ -45,28 +45,27 @@ namespace lidar {
 
 class LoggerHandler {
  public:
-  struct FileInfo {
-    uint8_t file_index;
-    uint32_t trans_index;
+  struct CurrentFileInfo {
+    uint8_t flag {0};
+    uint8_t file_index {0};
+    uint32_t trans_index {0};
     std::FILE* fp {nullptr};
-  };
-
-  struct FileState {
-    uint16_t total_file_num;
-    uint32_t transfer_size;
-    uint8_t file_index;
+    std::string file_name {""};
   };
 
   struct WriteBuffer {
-    uint16_t buff_size {0};
-    std::vector<uint8_t> buff {};
-    std::FILE* fp {nullptr};
+    uint8_t log_type;
+    uint8_t flag {0};
+    uint8_t file_index {0};
+    uint16_t data_length {0};        
+    uint32_t trans_index {0};
+    std::shared_ptr<uint8_t> data_ptr  = std::make_shared<uint8_t>(0);
   };
 
 public:
-  explicit LoggerHandler(std::string log_save_path, std::string broadcast_code) : 
-    log_save_path_(log_save_path),
-    broadcast_code_(broadcast_code),
+  explicit LoggerHandler(std::string log_root_path, std::string serial_num) : 
+    log_root_path_(log_root_path),
+    serial_num_(serial_num),
     is_stop_write_(false),
     thread_ptr_(nullptr) {
   };
@@ -78,21 +77,18 @@ public:
   void Init();
   void Destory();
 
-  void CreateFile(DeviceLoggerFilePushRequest* req);
-  void WriteFile(DeviceLoggerFilePushRequest* req);
-  void StopFile(DeviceLoggerFilePushRequest* req);
-
-  std::map<uint8_t, FileState> GetFilesState() {
-    return files_state_;
-  }
+  void StoreLogBag(DeviceLoggerFilePushRequest* req, uint8_t flag);
+  void CreateFile(const WriteBuffer& write_buff);
+  void WriteFile(const WriteBuffer& write_buff);
+  void StopFile(const WriteBuffer& write_buff);
 
   void Write();
   void SaveToFile();
 private:
-  std::string log_save_path_;
-  std::string broadcast_code_;
-  std::map <uint8_t, FileInfo> current_files_;
-  std::map <uint8_t, FileState> files_state_;
+  std::string log_root_path_;
+  std::map <uint8_t, std::string> log_branch_path_;
+  std::string serial_num_;
+  std::map <uint8_t, CurrentFileInfo> current_files_;
   
   std::mutex queue_mutex_;
   std::queue<WriteBuffer> queue_;

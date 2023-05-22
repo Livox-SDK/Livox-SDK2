@@ -177,11 +177,13 @@ static const uint16_t kDetectionPort = 56000;
 static const uint16_t kDetectionListenPort = 56001;
 
 static const uint16_t kHAPCmdPort = 56000;
+static const uint16_t kHAPPushMsgPort = 56000;
 static const uint16_t kHAPPointDataPort = 57000;
 static const uint16_t kHAPIMUPort = 58000;
 static const uint16_t kHAPLogPort = 59000;
 
-static const uint16_t kLogPort = 59000;
+/** kLogPort, which is the log port to be banned. */
+static const uint16_t kLogPort = 0;
 
 static const uint16_t kHAPLidarCmdPort = 56000;
 
@@ -244,6 +246,13 @@ typedef struct {
   uint8_t file_index;      // 0 for cfg, 1 for log
   uint32_t trans_index;     //sequence of trans file
 } DeviceLoggerFilePushReponse;
+
+enum class Flag : uint8_t {
+  kNull,
+  kCreateFile,
+  kEndFile,
+  kTransferData
+};
 
 using DataCallback = std::function<void(const uint32_t handle, const uint8_t dev_type, LivoxLidarEthernetPacket *data, void *client_data)>;
 using LidarInfoCallback = std::function<void(const uint32_t, const uint8_t, const char*, void*)>;

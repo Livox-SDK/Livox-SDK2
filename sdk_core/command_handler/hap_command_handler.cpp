@@ -30,8 +30,11 @@
 #include "base/logging.h"
 #include "comm/protocol.h"
 #include "comm/generate_seq.h"
+
 #include "build_request.h"
 #include "general_command_handler.h"
+
+#include "parse_lidar_state_info.h"
 
 namespace livox {
 namespace lidar {
@@ -71,7 +74,7 @@ void HapCommandHandler::Handle(const uint32_t handle, uint16_t lidar_port, const
     OnCommandAck(handle, command);
   } else if (command.packet.cmd_type == kCommandTypeCmd) {
     LOG_INFO(" Receive Command: Id {} Seq {}", command.packet.cmd_id, command.packet.seq_num);
-    OnCommandCmd(handle, command);
+    OnCommandCmd(handle, lidar_port, command);
   }
 }
 
@@ -88,7 +91,12 @@ void HapCommandHandler::OnCommandAck(uint32_t handle, const Command &command) {
   (*command.cb)(kLivoxLidarStatusSuccess, handle, command.packet.data);
 }
 
-void HapCommandHandler::OnCommandCmd(uint32_t handle, const Command &command) {
+void HapCommandHandler::OnCommandCmd(const uint32_t handle, uint16_t lidar_port, const Command& command) {
+  if (command.packet.cmd_id == kCommandIDLidarPushMsg && lidar_port == kHAPPushMsgPort) {
+    std::string info;
+    ParseLidarStateInfo::Parse(command.packet, info);
+    GeneralCommandHandler::GetInstance().PushLivoxLidarInfo(handle, info);
+  }
 }
 
 void HapCommandHandler::UpdateLidarCfg(const ViewLidarIpInfo& view_lidar_info) {
@@ -279,7 +287,7 @@ livox_status HapCommandHandler::SendLoggerCommand(const Command &command) {
   }
 
   GeneralCommandHandler::GetInstance().AddCommand(command);
-
+  
   std::vector<uint8_t> buf(kMaxCommandBufferSize + 1);
   int size = 0;
   comm_port_->Pack(buf.data(), kMaxCommandBufferSize, (uint32_t *)&size, command.packet);

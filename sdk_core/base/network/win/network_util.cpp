@@ -42,7 +42,7 @@ socket_t CreateSocket(uint16_t port, bool nonblock, bool reuse_port, bool is_bro
   int status = -1;
   int on = -1;
   int sock = -1;
-  int recv_buff_size = 1024 * 1024 * 5;
+  int recv_buff_size = 1024 * 1024 * 200;
   struct sockaddr_in servaddr;
   sock = socket(AF_INET, SOCK_DGRAM, 0);
   if (sock == INVALID_SOCKET) {
