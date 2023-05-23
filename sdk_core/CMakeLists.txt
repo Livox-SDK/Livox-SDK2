@@ -15,8 +15,6 @@ set(LIVOX_API_HEADER
         ../include/livox_lidar_def.h
         ../include/livox_lidar_api.h
         ../include/livox_lidar_cfg.h
-	../include/livox_lidar_manager.h
-        ../include/livox_lidar_fault_info.h
         )
 
 set_target_properties(${SDK_LIBRARY_STATIC} #${SDK_LIBRARY_SHARED} 
