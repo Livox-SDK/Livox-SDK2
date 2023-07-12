@@ -107,9 +107,6 @@ bool LivoxLidarSdkInit(const char* path, const char* host_ip, const LivoxLidarLo
 }
 
 void LivoxLidarSdkUninit() {
-  if (!is_initialized) {
-    return;
-  }
 #ifdef WIN32
     WSACleanup();
 #endif // WIN32
