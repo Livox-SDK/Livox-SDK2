@@ -39,14 +39,14 @@
 #if !defined(ARDUINO)
 #define PROGMEM
 #define pgm_read_byte(addr) (*(const unsigned char *)(addr))
-#define pgm_read_word(addr) ({ \
-	typeof(addr) _addr = (addr); \
-	*(const unsigned short *)(_addr); \
-})
-#define pgm_read_dword(addr) ({ \
-	typeof(addr) _addr = (addr); \
-	*(const unsigned long *)(_addr); \
-})
+template <typename T>
+static constexpr unsigned short pgm_read_word(T addr) noexcept {
+	return *(const unsigned short *)(addr);
+};
+template <typename T>
+static constexpr unsigned long pgm_read_dword(T addr) noexcept {
+	return *(const unsigned long *)(addr);
+};
 #endif
 
 
