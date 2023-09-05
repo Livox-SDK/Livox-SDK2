@@ -413,6 +413,15 @@ livox_status LivoxLidarStartLogger(const uint32_t handle, const LivoxLidarLogTyp
  */
 livox_status LivoxLidarStopLogger(const uint32_t handle, const LivoxLidarLogType log_type, LivoxLidarLoggerCallback cb, void* client_data);
 
+/**
+ * Set LiDAR debug point cloud switch.
+ * @param  handle                           device handle.
+ * @param  enable                           true for enabling debug point cloud
+ * @param  cb                               callback for the command.
+ * @param  client_data                      user data associated with the command.
+ * @return kStatusSuccess on successful return, see \ref LivoxStatus for other error codes.
+ */
+livox_status SetLivoxLidarDebugPointCloud(uint32_t handle, bool enable, LivoxLidarLoggerCallback cb, void* client_data);
 
 /*******Upgrade Module***********/
 

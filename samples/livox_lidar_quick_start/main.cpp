@@ -26,7 +26,7 @@
 #include "livox_lidar_api.h"
 
 #ifdef _WIN32
-#include <winsock.h>
+#include <winsock2.h>
 #else
 #include <unistd.h>
 #include <arpa/inet.h>
@@ -77,7 +77,7 @@ void ImuDataCallback(uint32_t handle, const uint8_t dev_type,  LivoxLidarEtherne
 //     printf("lidar set ip number timeout\n");
 //   }
 // }
-     
+
 void WorkModeCallback(livox_status status, uint32_t handle,LivoxLidarAsyncControlResponse *response, void *client_data) {
   if (response == nullptr) {
     return;
@@ -171,10 +171,10 @@ void LidarInfoChangeCallback(const uint32_t handle, const LivoxLidarInfo* info, 
 }
 
 void LivoxLidarPushMsgCallback(const uint32_t handle, const uint8_t dev_type, const char* info, void* client_data) {
-   struct in_addr tmp_addr;
-   tmp_addr.s_addr = handle;  
-   std::cout << "handle: " << handle << ", ip: " << inet_ntoa(tmp_addr) << ", push msg info: " << std::endl;
-   std::cout << info << std::endl;
+  struct in_addr tmp_addr;
+  tmp_addr.s_addr = handle;  
+  std::cout << "handle: " << handle << ", ip: " << inet_ntoa(tmp_addr) << ", push msg info: " << std::endl;
+  std::cout << info << std::endl;
   return;
 }
 

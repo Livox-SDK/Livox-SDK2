@@ -38,6 +38,7 @@
 #include "command_handler/general_command_handler.h"
 #include "data_handler/data_handler.h"
 #include "logger_handler/logger_manager.h"
+#include "debug_point_cloud_handler/debug_point_cloud_manager.h"
 
 namespace livox {
 namespace lidar {
@@ -75,6 +76,11 @@ bool DeviceManager::Init(const std::string& host_ip, const LivoxLidarLoggerCfgIn
     lidar_logger_cfg_ptr->lidar_log_enable = log_cfg_info->lidar_log_enable;
     lidar_logger_cfg_ptr->lidar_log_cache_size = log_cfg_info->lidar_log_cache_size;
     lidar_logger_cfg_ptr->lidar_log_path = log_cfg_info->lidar_log_path;
+    
+    if(!DebugPointCloudManager::GetInstance().SetStorePath(lidar_logger_cfg_ptr->lidar_log_path)) {
+      LOG_ERROR("Set the debug point cloud file storage path failed.");
+      return false;
+    }
   }
 
   if (!LoggerManager::GetInstance().Init(lidar_logger_cfg_ptr)) {
@@ -126,6 +132,16 @@ bool DeviceManager::Init(std::shared_ptr<std::vector<LivoxLidarCfg>>& lidars_cfg
     return false;
   }
   comm_port_.reset(new CommPort());
+  
+  if (!lidar_logger_cfg_ptr) {
+    LOG_ERROR("lidar_logger_cfg_ptr is nullptr.");
+    return false;
+  }
+
+  if (!DebugPointCloudManager::GetInstance().SetStorePath(lidar_logger_cfg_ptr->lidar_log_path)) {
+    LOG_ERROR("Set the debug point cloud file storage path failed.");
+    return false;
+  }
 
   if (!LoggerManager::GetInstance().Init(lidar_logger_cfg_ptr)) {
     LOG_ERROR("Logger manager init failed.");
@@ -277,6 +293,11 @@ bool DeviceManager::CreateDataChannel(const HostNetInfo& host_net_info) {
 
   if (!CreateDataSocketAndAddDelegate(host_net_info.host_ip, host_net_info.imu_data_port, host_net_info.multicast_ip)) {
     LOG_ERROR("Create socket and add delegate failed.");
+    return false;
+  }
+
+  if (!CreateDataSocketAndAddDelegate(host_net_info.host_ip, kHostDebugPointCloudPort, host_net_info.multicast_ip)) {
+    LOG_ERROR("Create debug point cloud socket and add delegate failed.");
     return false;
   }
   return true;
@@ -450,6 +471,10 @@ void DeviceManager::OnData(socket_t sock, void *client_data) {
 
   if (lidar_ip == detection_host_ip_) {
     return;
+  }
+
+  if (port == kMid360LidarDebugPointCloudPort) {
+    DebugPointCloudManager::GetInstance().Handler(handle, port, (uint8_t*)(buf.get()), size);
   }
 
   if (port == kHAPLogPort || port == kPaLidarLogPort || port == kMid360LidarLogPort) {

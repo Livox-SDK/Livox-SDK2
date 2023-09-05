@@ -1,6 +1,4 @@
 {
-  "lidar_log_enable": true,
-  "lidar_log_cache_size_MB": 500,
   "lidar_log_path": "./",
 
   "MID360": {

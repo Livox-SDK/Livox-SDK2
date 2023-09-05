@@ -43,13 +43,6 @@ namespace lidar {
 
 #pragma pack(1)
 
-typedef struct {
-  std::string sn;
-  uint8_t dev_type;
-  std::string lidar_ip;
-  uint16_t cmd_port;
-} LidarDeviceInfo;
-
 typedef enum {
   kLidarLoggerCreate,
   kLidarLoggerStop,

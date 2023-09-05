@@ -52,7 +52,7 @@ constexpr uint16_t kRealtimeLogCacheRatio = 3;
 LoggerManager::LoggerManager()
     : log_enable_(false),
       log_cycle_delete_enable_(false),
-      log_root_path_(""),
+      log_root_path_("./"),
       max_realtimelog_cache_size_(150 * 1024 * 1024),
       max_exceptionlog_cache_size_(50 * 1024 * 1024),
       comm_port_(nullptr),
@@ -110,10 +110,7 @@ bool LoggerManager::Init(std::shared_ptr<LivoxLidarLoggerCfg> lidar_logger_cfg_p
 }
 
 bool LoggerManager::GetLogEnable() {
-  if (log_enable_.load() == true) {
-    return true;
-  }
-  return false;
+  return log_enable_.load();
 }
 
 bool LoggerManager::InitLoggerSavePath(std::string log_root_path) {
@@ -365,9 +362,10 @@ void LoggerManager::Destory() {
   }
 
   StopAllLogger();
+  if (log_enable_.load()) {
+    ChangeHiddenFiles(log_root_path_);
+  }
   log_enable_.store(false);
-
-  ChangeHiddenFiles(log_root_path_);
   is_destroy_.store(true);
 }
 

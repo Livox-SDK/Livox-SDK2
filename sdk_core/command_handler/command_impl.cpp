@@ -26,12 +26,16 @@
 
 #include "livox_lidar_def.h"
 #include "general_command_handler.h"
+#include "debug_point_cloud_handler/debug_point_cloud_manager.h"
 
 #include "base/logging.h"
 #include "comm/protocol.h"
 #include "comm/generate_seq.h"
 
 #include "build_request.h"
+
+#include <sstream>
+#include <inttypes.h>
 
 namespace livox {
 namespace lidar {
@@ -679,6 +683,25 @@ livox_status CommandImpl::LivoxLidarRequestReset(uint32_t handle, LivoxLidarRese
   return GeneralCommandHandler::GetInstance().LivoxLidarRequestReset(handle, cb, client_data);
 }
 
+livox_status CommandImpl::SetLivoxLidarDebugPointCloud(uint32_t handle, bool enable,
+                                                       LivoxLidarLoggerCallback cb, void* client_data) {
+  DebugPointCloudManager::GetInstance().Enable(enable);
+
+  LivoxLidarDebugPointCloudRequest req_buff {};
+  req_buff.enable    = enable ? 1 : 0;
+  req_buff.host_port = kHostDebugPointCloudPort; // 44332
+  req_buff.bandwidth = 0;  // units Mbps
+  sscanf(GeneralCommandHandler::GetInstance().GetLidarCfg(handle).host_net_info.host_ip.c_str(),
+                             "%" SCNu8 ".%" SCNu8 ".%" SCNu8 ".%" SCNu8, &req_buff.host_ip_addr[0]
+                                                                       , &req_buff.host_ip_addr[1]
+                                                                       , &req_buff.host_ip_addr[2]
+                                                                       , &req_buff.host_ip_addr[3]);
+  return GeneralCommandHandler::GetInstance().SendLoggerCommand(handle,
+                    kCommandIDLidarDebugPointCloudControl,
+                    reinterpret_cast<uint8_t*>(&req_buff),
+                    uint16_t(sizeof(LivoxLidarDebugPointCloudRequest)),
+                    MakeCommandCallback<LivoxLidarLoggerResponse>(cb, client_data));
+}
 // Upgrade
 livox_status CommandImpl::LivoxLidarStartUpgrade(uint32_t handle, uint8_t *data, uint16_t length,
     LivoxLidarStartUpgradeCallback cb, void* client_data) {

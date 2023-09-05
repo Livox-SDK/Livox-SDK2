@@ -2,10 +2,15 @@
 
 All notable changes to Livox-SDK2 will be documentd in this file.
 
+## [1.2.2]
+### Added
+
+- Support Mid-360 debug point cloud.
+
 ## [1.2.1]
 ### Fixed
 
-- Fix FastCRC compilation errors in Windows
+- Fix FastCRC compilation errors in Windows.
 
 ## [1.2.0]
 ### Added

@@ -31,6 +31,7 @@
 #include "command_handler/hap_command_handler.h"
 #include "command_handler/mid360_command_handler.h"
 #include "logger_handler/logger_manager.h"
+#include "debug_point_cloud_handler/debug_point_cloud_manager.h"
 #include "base/logging.h"
 #include "comm/protocol.h"
 #include "comm/generate_seq.h"
@@ -314,6 +315,7 @@ void GeneralCommandHandler::HandleDetectionData(uint32_t handle, uint16_t lidar_
       handle, detection_data->dev_type, detection_data->sn, detection_data->cmd_port);
 
   LoggerManager::GetInstance().AddDevice(handle, detection_data);
+  DebugPointCloudManager::GetInstance().AddDevice(handle, detection_data);
 
   if (!VerifyNetSegment(detection_data)) {
     return;
@@ -627,6 +629,10 @@ bool GeneralCommandHandler::GetQueryLidarInternalInfoKeys(const uint32_t handle,
     }
   }
   return false;
+}
+
+const LivoxLidarCfg& GeneralCommandHandler::GetLidarCfg(const uint32_t handle) {
+  return custom_lidars_cfg_map_[handle];
 }
 
 livox_status GeneralCommandHandler::LivoxLidarRequestReset(uint32_t handle, LivoxLidarResetCallback cb, void* client_data) {

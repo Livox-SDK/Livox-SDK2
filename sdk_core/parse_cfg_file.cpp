@@ -32,8 +32,7 @@ namespace lidar {
 
 const std::map<std::string, LivoxLidarDeviceType> dev_type_map = {
   {"HAP",     kLivoxLidarTypeIndustrialHAP},
-  {"MID360",  kLivoxLidarTypeMid360},
-  {"PA",      kLivoxLidarTypePA}
+  {"MID360",  kLivoxLidarTypeMid360}
 };
 
 
@@ -120,7 +119,10 @@ bool ParseCfgFile::Parse(std::shared_ptr<std::vector<LivoxLidarCfg>>& lidars_cfg
   } else {
     lidar_logger_cfg_ptr->lidar_log_enable = false;
     lidar_logger_cfg_ptr->lidar_log_cache_size = 0;
-    lidar_logger_cfg_ptr->lidar_log_path = "";
+    lidar_logger_cfg_ptr->lidar_log_path = "./"; // TODO Executable program path
+    if (doc.HasMember("lidar_log_path") && doc["lidar_log_path"].IsString()) {
+      lidar_logger_cfg_ptr->lidar_log_path = doc["lidar_log_path"].GetString();
+    }
     LOG_INFO("Livox lidar logger disable.");
   }
 
@@ -141,17 +143,6 @@ bool ParseCfgFile::Parse(std::shared_ptr<std::vector<LivoxLidarCfg>>& lidars_cfg
     uint8_t device_type = dev_type_map.at("MID360");    
     const rapidjson::Value &object = doc["MID360"];
 
-    if (!ParseLidarCfg(object, device_type, lidars_cfg_ptr, custom_lidars_cfg_ptr)) {
-      if (raw_file) {
-        std::fclose(raw_file);
-      }
-      return false;
-    }
-  }
-
-  if (doc.HasMember("PA") && doc["PA"].IsObject()) {
-    uint8_t device_type = dev_type_map.at("PA");    
-    const rapidjson::Value &object = doc["PA"];
     if (!ParseLidarCfg(object, device_type, lidars_cfg_ptr, custom_lidars_cfg_ptr)) {
       if (raw_file) {
         std::fclose(raw_file);

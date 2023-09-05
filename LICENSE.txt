@@ -1,4 +1,4 @@
-﻿The following portions of the LIVOX’s Livox SDK2 (“Software” referred to in the terms below) are made available to you under the terms of the MIT License. A copy of the MIT license is provided below and is also available at https://opensource.org/licenses/MIT.
+The following portions of the LIVOX’s Livox SDK2 (“Software” referred to in the terms below) are made available to you under the terms of the MIT License. A copy of the MIT license is provided below and is also available at https://opensource.org/licenses/MIT.
 
 Livox-SDK2
 ├── CMakeLists.txt
@@ -78,8 +78,6 @@ Livox-SDK2
     │   ├── hap_command_handler.h
     │   ├── mid360_command_handler.cpp
     │   ├── mid360_command_handler.h
-    │   ├── pa_command_handler.cpp
-    │   ├── pa_command_handler.h
     │   ├── parse_lidar_state_info.cpp
     │   └── parse_lidar_state_info.h
     ├── data_handler
