@@ -44,7 +44,7 @@ namespace livox {
 namespace lidar {
 
 DeviceManager::DeviceManager()
-    : sdk_framework_cfg_ptr_(nullptr),
+    : sdk_framework_cfg_ptr_(new LivoxLidarSdkFrameworkCfg()),
       lidars_cfg_ptr_(nullptr),
       custom_lidars_cfg_ptr_(nullptr),
       lidar_logger_cfg_ptr_(nullptr),
