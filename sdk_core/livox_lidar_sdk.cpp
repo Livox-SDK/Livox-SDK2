@@ -147,6 +147,14 @@ void SetLivoxLidarPointCloudCallBack(LivoxLidarPointCloudCallBack cb, void *clie
   DataHandler::GetInstance().SetPointDataCallback(cb, client_data);
 }
 
+void LivoxLidarAddCmdObserver(LivoxLidarCmdObserverCallBack cb, void *client_data) {
+  GeneralCommandHandler::GetInstance().LivoxLidarAddCmdObserver(cb, client_data);
+}
+
+void LivoxLidarRemoveCmdObserver() {
+  GeneralCommandHandler::GetInstance().LivoxLidarRemoveCmdObserver();
+}
+
 void SetLivoxLidarImuDataCallback(LivoxLidarImuDataCallback cb, void* client_data) {
   DataHandler::GetInstance().SetImuDataCallback(cb, client_data);
 }

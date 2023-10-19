@@ -183,6 +183,11 @@ void GeneralCommandHandler::Handler(const uint8_t dev_type, const uint32_t handl
   if (buf == nullptr || buf_size == 0) {
     return;
   }
+  
+  if (cmd_observer_cb_) {
+    cmd_observer_cb_(handle, reinterpret_cast<LivoxLidarCmdPacket*>(buf), cmd_observer_client_data_);
+  }
+
   if (dev_type == kLivoxLidarTypePA && lidar_port == kPaLidarFaultPort) {
     std::shared_ptr<CommandHandler> cmd_handler = GetLidarCommandHandler(dev_type);
     if (cmd_handler == nullptr) {
@@ -575,19 +580,31 @@ bool GeneralCommandHandler::GetQueryLidarInternalInfoKeys(const uint32_t handle,
       std::set<ParamKeyName> tmp_key_sets {
         kKeyPclDataType,
         kKeyPatternMode,
+        kKeyDualEmitEn,
+        kKeyPointSendEn,
         kKeyLidarIpCfg,
         kKeyLidarPointDataHostIpCfg,
         kKeyLidarImuHostIpCfg,
+        kKeyLogHostIpCfg,
         kKeyInstallAttitude,
+        kKeyBlindSpotSet,
         kKeyWorkMode,
+        kKeyGlassHeat,
         kKeyImuDataEn,
+        kKeyFusaEn,
+        kKeyForceHeatEn,
         kKeySn,
         kKeyProductInfo,
         kKeyVersionApp,
         kKeyVersionLoader,
         kKeyVersionHardware,
         kKeyMac,
-        kKeyCurWorkState
+        kKeyCurWorkState,
+        kKeyStatusCode,
+        kKeyLidarDiagStatus,
+        kKeyLidarFlashStatus,
+        kKeyFwType,
+        kKeyCurGlassHeatState
       };
       key_sets.swap(tmp_key_sets);
       return true;

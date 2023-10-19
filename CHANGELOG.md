@@ -2,6 +2,12 @@
 
 All notable changes to Livox-SDK2 will be documentd in this file.
 
+## [1.2.3]
+### Added
+
+- Support to get CMD packet data;
+- Support full info keys of HAP. 
+
 ## [1.2.2]
 ### Added
 

@@ -64,6 +64,18 @@ void LivoxLidarSdkUninit();
 void SetLivoxLidarPointCloudCallBack(LivoxLidarPointCloudCallBack cb, void* client_data);
 
 /**
+ * Add the lidar command data observer.
+ * @param handle                 device handle.
+ * @param client_data            user data associated with the command.
+ */
+void LivoxLidarAddCmdObserver(LivoxLidarCmdObserverCallBack cb, void* client_data);
+
+/**
+ * Remove the lidar command data observer.
+ */
+void LivoxLidarRemoveCmdObserver();
+
+/**
  * Set the point cloud observer.
  * @param cb                     callback to receive Status Info.
  * @param client_data            user data associated with the command.

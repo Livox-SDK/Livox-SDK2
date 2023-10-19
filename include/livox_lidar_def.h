@@ -116,6 +116,7 @@ typedef enum {
   kKeyLidarFlashStatus        = 0x800F,
   kKeyFwType                  = 0x8010,
   kKeyHmsCode                 = 0x8011,
+  kKeyCurGlassHeatState       = 0x8012,
   
   kKeyRoiMode                 = 0xFFFE,
   kKeyLidarDiagInfoQuery      = 0xFFFF
@@ -135,6 +136,20 @@ typedef struct {
   uint8_t timestamp[8];
   uint8_t data[1];             /**< Point cloud data. */
 } LivoxLidarEthernetPacket;
+
+typedef struct {
+  uint8_t  sof;
+  uint8_t  version;
+  uint16_t length;
+  uint32_t seq_num;
+  uint16_t cmd_id;
+  uint8_t  cmd_type;
+  uint8_t  sender_type;
+  char     rsvd[6];
+  uint16_t crc16_h;
+  uint32_t crc32_d;
+  uint8_t  data[1];
+} LivoxLidarCmdPacket;
 
 typedef struct {
   float gyro_x;
@@ -459,6 +474,14 @@ typedef struct {
  * @param client_data            user data associated with the command.
  */
 typedef void (*LivoxLidarPointCloudCallBack)(const uint32_t handle, const uint8_t dev_type, LivoxLidarEthernetPacket* data, void* client_data);
+
+/**
+ * Callback function for receiving point cloud data.
+ * @param handle                 device handle.
+ * @param data                   device's command data.
+ * @param client_data            user data associated with the command.
+ */
+typedef void (*LivoxLidarCmdObserverCallBack)(const uint32_t handle, const LivoxLidarCmdPacket* data, void* client_data);
 
 /**
  * Callback function for point cloud observer.
