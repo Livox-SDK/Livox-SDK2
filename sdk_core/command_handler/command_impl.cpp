@@ -27,6 +27,7 @@
 #include "livox_lidar_def.h"
 #include "general_command_handler.h"
 #include "debug_point_cloud_handler/debug_point_cloud_manager.h"
+#include "spdlog/fmt/fmt.h"
 
 #include "base/logging.h"
 #include "comm/protocol.h"
@@ -36,9 +37,51 @@
 
 #include <sstream>
 #include <inttypes.h>
+#include <string>
+#include <iomanip>
+#include <chrono>
+#include <vector>
 
 namespace livox {
 namespace lidar {
+
+std::int64_t StringToTimestamp(std::string const& fmt, std::string const& date) {
+    std::tm timestamp = {};
+    std::stringstream date_ss(date);
+    date_ss >> std::get_time(&timestamp, fmt.c_str());
+    auto time_point = std::chrono::system_clock::from_time_t(std::mktime(&timestamp));
+
+    return std::chrono::duration_cast<std::chrono::seconds>(time_point.time_since_epoch()).count();
+}
+
+std::vector<std::string> Split(std::string const& str, char const pattern) {
+    std::vector<std::string> res;
+    std::stringstream input(str);
+    std::string part;
+    while (getline(input, part, pattern)) {
+        res.push_back(part);
+    }
+    return res;
+}
+
+
+std::uint64_t ParseGPRMC(std::string const& gprmc) {
+    std::vector<std::string> gprmc_vec = Split(gprmc, ',');
+    if (gprmc_vec.size() < 9 || gprmc_vec[1].length() < 6 || gprmc_vec[9].length() < 6) {
+      LOG_ERROR("gprmc check failed. gprmc is : {}", gprmc);
+      return 0;
+    }
+    auto year        = gprmc_vec[9].substr(4);
+    auto month       = gprmc_vec[9].substr(2, 2);
+    auto day         = gprmc_vec[9].substr(0, 2);
+    auto hour        = gprmc_vec[1].substr(0, 2);
+    auto minute      = gprmc_vec[1].substr(2, 2);
+    auto second      = gprmc_vec[1].substr(4, 2);
+
+    std::string time = fmt::format("{}-{}-{} {}:{}:{}", "20" + year, month, day, hour, minute, second);
+    std::uint64_t time_ms = StringToTimestamp("%Y-%m-%d %H:%M:%S", time) * 1000;
+    return time_ms * 1000 * 1000;
+}
 
 livox_status CommandImpl::QueryLivoxLidarInternalInfo(uint32_t handle, QueryLivoxLidarInternalInfoCallback cb, void* client_data) {
   uint8_t req_buff[kMaxCommandBufferSize] = {0};
@@ -702,6 +745,20 @@ livox_status CommandImpl::SetLivoxLidarDebugPointCloud(uint32_t handle, bool ena
                     uint16_t(sizeof(LivoxLidarDebugPointCloudRequest)),
                     MakeCommandCallback<LivoxLidarLoggerResponse>(cb, client_data));
 }
+
+livox_status CommandImpl::SetLivoxLidarRmcSyncTime(uint32_t handle, const char* rmc, uint16_t rmc_length,
+                                                       LivoxLidarRmcSyncTimeCallBack cb, void* client_data) {
+  LivoxLidarRmcSyncTimeRequest req_buff {};
+  req_buff.type = LivoxLidarRmcSyncTimeRequest::SyncTimeType::kRmcSyncTime;
+  req_buff.ns   = ParseGPRMC(std::string(rmc, rmc_length));
+
+  return GeneralCommandHandler::GetInstance().SendCommand(handle,
+                    kCommandIDLidarSetPPSSync,
+                    reinterpret_cast<uint8_t*>(&req_buff),
+                    uint16_t(sizeof(LivoxLidarRmcSyncTimeRequest)),
+                    MakeCommandCallback<LivoxLidarRmcSyncTimeResponse>(cb, client_data));
+}
+
 // Upgrade
 livox_status CommandImpl::LivoxLidarStartUpgrade(uint32_t handle, uint8_t *data, uint16_t length,
     LivoxLidarStartUpgradeCallback cb, void* client_data) {

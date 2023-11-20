@@ -435,6 +435,17 @@ livox_status LivoxLidarStopLogger(const uint32_t handle, const LivoxLidarLogType
  */
 livox_status SetLivoxLidarDebugPointCloud(uint32_t handle, bool enable, LivoxLidarLoggerCallback cb, void* client_data);
 
+/**
+ * Set LiDAR GPS "GPRMC" string to synchronize the time.
+ * @param  handle                           device handle.
+ * @param  rmc                              GPS "GPRMC" string.
+ * @param  rmc_length                       GPS "GPRMC" string length.
+ * @param  cb                               callback for the command.
+ * @param  client_data                      user data associated with the command.
+ * @return kStatusSuccess on successful return, see \ref LivoxStatus for other error codes.
+ */
+livox_status SetLivoxLidarRmcSyncTime(uint32_t handle, const char* rmc, uint16_t rmc_length, LivoxLidarRmcSyncTimeCallBack cb, void* client_data);
+
 /*******Upgrade Module***********/
 
 /**

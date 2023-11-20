@@ -337,6 +337,13 @@ typedef struct {
   uint16_t  bandwidth;
 } LivoxLidarDebugPointCloudRequest;
 
+typedef struct {
+  enum class SyncTimeType : std::uint8_t {
+    kRmcSyncTime = 2,
+  } type;
+  uint64_t ns;
+} LivoxLidarRmcSyncTimeRequest;
+
 typedef void(*LivoxLidarStartUpgradeCallback)(livox_status status, uint32_t handle,
     LivoxLidarStartUpgradeResponse* response, void* client_data);
 

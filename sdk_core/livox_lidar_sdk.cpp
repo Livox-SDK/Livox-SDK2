@@ -294,6 +294,10 @@ livox_status SetLivoxLidarDebugPointCloud(uint32_t handle, bool enable, LivoxLid
   return CommandImpl::SetLivoxLidarDebugPointCloud(handle, enable, cb, client_data);
 }
 
+livox_status SetLivoxLidarRmcSyncTime(uint32_t handle, const char* rmc, uint16_t rmc_length, LivoxLidarRmcSyncTimeCallBack cb, void* client_data) {
+  return CommandImpl::SetLivoxLidarRmcSyncTime(handle, rmc, rmc_length, cb, client_data);
+}
+
 // reset lidar
 livox_status LivoxLidarRequestReset(uint32_t handle, LivoxLidarResetCallback cb, void* client_data) {
   return CommandImpl::LivoxLidarRequestReset(handle, cb, client_data);

@@ -2,6 +2,11 @@
 
 All notable changes to Livox-SDK2 will be documentd in this file.
 
+## [1.2.4]
+### Added
+
+- Support Mid-360 GPS time synchronization.
+
 ## [1.2.3]
 ### Added
 

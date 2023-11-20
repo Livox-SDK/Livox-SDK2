@@ -464,6 +464,10 @@ typedef struct {
   uint8_t progress;
 } LivoxLidarUpgradeState;
 
+typedef struct {
+  uint8_t ret; // succ: 0, fail: 1
+} LivoxLidarRmcSyncTimeResponse;
+
 #pragma pack()
 
 /**
@@ -556,5 +560,14 @@ typedef void (*LivoxLidarLoggerCallback)(livox_status status, uint32_t handle,
 typedef void (*LivoxLidarRebootCallback)(livox_status status, uint32_t handle, LivoxLidarRebootResponse* response, void* client_data);
 
 typedef void (*OnLivoxLidarUpgradeProgressCallback)(uint32_t handle, LivoxLidarUpgradeState state, void *client_data);
+
+/**
+ * Callback function for receiving point cloud data.
+ * @param status                 status info.
+ * @param handle                 device handle.
+ * @param data                   device's command data.
+ * @param client_data            user data associated with the command.
+ */
+typedef void (*LivoxLidarRmcSyncTimeCallBack)(livox_status status, uint32_t handle, LivoxLidarRmcSyncTimeResponse* data, void* client_data);
 
 #endif  // LIVOX_LIDAR_DEF_H_
