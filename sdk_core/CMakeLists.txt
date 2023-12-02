@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.16.0 FATAL_ERROR)
 
 set(SDK_LIBRARY_STATIC livox_lidar_sdk_static)
 set(SDK_LIBRARY_SHARED livox_lidar_sdk_shared)
