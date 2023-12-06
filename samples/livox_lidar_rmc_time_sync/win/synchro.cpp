@@ -114,7 +114,8 @@ bool Synchro::ParseGps(uint8_t in_byte) {
      char crc[3] = {0};
      uint32_t crc_num = 0;
      strncpy(crc, &rmc_buff_[cur_len_ - 1], 2);
-     sscanf(crc, "%x", &crc_num);
+     crc[2] = '\0';
+     auto sscanfResult = sscanf(crc, "%x", &crc_num);
      result ^= (uint8_t)crc_num;
      if (result == 0) {
        return true;
