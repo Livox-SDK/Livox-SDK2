@@ -31,6 +31,9 @@ Synchro::Synchro() {
   hfile_ = INVALID_HANDLE_VALUE;
   is_quit_ = false;
   rmc_buff_.resize(128,0);
+  baudrate_ = {};
+  cur_len_ = {};
+  parity_ = {};
 }
 
 Synchro::~Synchro() {
@@ -215,12 +218,14 @@ int Synchro::Setup(enum BaudRate baud, enum Parity parity) {
 size_t Synchro::Read(uint8_t *buffer, size_t size) {
   DWORD len = 0;
   if (hfile_ !=  INVALID_HANDLE_VALUE) {
-    ReadFile(hfile_, buffer, size, &len, NULL);
-    return len;
-  } else {
-    return 0;
+    auto ReadFileResult = ReadFile(hfile_, buffer, size, &len, NULL);
+    if (ReadFileResult) {
+        return len;
+    }
   }
+  return 0;
 }
+
 
 
 
