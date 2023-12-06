@@ -47,7 +47,7 @@ bool ParseCfgFile::Parse(std::shared_ptr<std::vector<LivoxLidarCfg>>& lidars_cfg
   if (!raw_file) {
     LOG_INFO("Parse lidar config failed, can not open json config file!");
   }
-  char read_buffer[32768];
+  char read_buffer[1024*8];
   rapidjson::FileReadStream config_file(raw_file, read_buffer, sizeof(read_buffer));  
   rapidjson::Document doc;
   if (doc.ParseStream(config_file).HasParseError()) {

@@ -1348,11 +1348,13 @@ class arg_formatter_base {
   }
 
   void write(const char_type *value) {
-    if (!value)
-      FMT_THROW(format_error("string pointer is null"));
-    auto length = std::char_traits<char_type>::length(value);
-    basic_string_view<char_type> sv(value, length);
-    specs_ ? writer_.write(sv, *specs_) : writer_.write(sv);
+    if (value == nullptr) {
+          FMT_THROW(format_error("string pointer is null"));
+    } else {
+	    auto length = std::char_traits<char_type>::length(value);
+		basic_string_view<char_type> sv(value, length);
+		specs_ ? writer_.write(sv, *specs_) : writer_.write(sv);
+     }
   }
 
  public:
@@ -1460,8 +1462,8 @@ FMT_CONSTEXPR unsigned parse_nonnegative_int(
   }
   unsigned value = 0;
   // Convert to unsigned to prevent a warning.
-  unsigned max_int = (std::numeric_limits<int>::max)();
-  unsigned big = max_int / 10;
+  static constexpr int max_int = (std::numeric_limits<int>::max)();
+  auto big = max_int / 10;
   do {
     // Check for overflow.
     if (value > big) {
@@ -2367,7 +2369,7 @@ class basic_writer {
     basic_writer<Range> &writer;
     const Spec &spec;
     unsigned_type abs_value;
-    char prefix[4];
+    char prefix[4] = {0};
     unsigned prefix_size;
 
     string_view get_prefix() const { return string_view(prefix, prefix_size); }

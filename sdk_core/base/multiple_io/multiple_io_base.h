@@ -36,14 +36,14 @@ namespace lidar {
 
 #define NONE_EVENT 0       /* No events registered. */
 #define READBLE_EVENT 1    /* when descriptor is readable. */
-#define WRITABLE_EVENT 2   /* when descriptor is writeable. */
+#define WRITABLE_EVENT 2   /* when descriptor is writable. */
 
 typedef std::chrono::steady_clock::time_point TimePoint;
 typedef int FdEvent;
 
-typedef struct {
-  int fd;                                         /* File descriptor. */
-  FdEvent event;                                  /* Read | Write Event to listen. */
+typedef struct pollFd {
+  int fd = 0;                                     /* File descriptor. */
+  FdEvent event = 0;                              /* Read | Write Event to listen. */
   std::function<void(FdEvent)> event_callback;    /* Read or Write Event Callback. */
   std::function<void(TimePoint)> timer_callback;  /* Timer Event Callback. */
   std::function<void()> wake_callback;            /* WakeUp Event Callback. */

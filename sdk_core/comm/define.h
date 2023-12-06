@@ -42,43 +42,43 @@ namespace lidar {
 const uint16_t KDefaultTimeOut = 1000;
 static const uint32_t kMaxCommandBufferSize = 1400;
 
-typedef struct {
+typedef struct livoxLidarNetInfo {
   std::string lidar_ipaddr;
   std::string lidar_subnet_mask;
   std::string lidar_gateway;
 
-  uint16_t cmd_data_port;
-  uint16_t push_msg_port;
-  uint16_t point_data_port;
-  uint16_t imu_data_port;
-  uint16_t log_data_port;
+  uint16_t cmd_data_port = 0;
+  uint16_t push_msg_port = 0;
+  uint16_t point_data_port = 0;
+  uint16_t imu_data_port = 0;
+  uint16_t log_data_port = 0;
 } LivoxLidarNetInfo;
 
-typedef struct {
+typedef struct hostNetInfo {
   std::string host_ip;
   std::string multicast_ip;
 
-  uint16_t cmd_data_port;
-  uint16_t push_msg_port;
-  uint16_t point_data_port;
-  uint16_t imu_data_port;
-  uint16_t log_data_port;
+  uint16_t cmd_data_port = 0;
+  uint16_t push_msg_port = 0;
+  uint16_t point_data_port = 0;
+  uint16_t imu_data_port = 0;
+  uint16_t log_data_port = 0;
 } HostNetInfo;
 
 typedef struct {
   std::vector<uint16_t> cmd_key_set;
 } GeneralCfgInfo; 
 
-typedef struct {
-  uint8_t device_type;
+typedef struct livoxLidarCfg {
+  uint8_t device_type = 0;
   LivoxLidarNetInfo lidar_net_info;
   HostNetInfo host_net_info;
   GeneralCfgInfo general_cfg_info;
 } LivoxLidarCfg;
 
-typedef struct {
-  bool lidar_log_enable;
-  uint64_t lidar_log_cache_size;
+typedef struct livoxLidarLoggerCfg {
+  bool lidar_log_enable = false;
+  uint64_t lidar_log_cache_size = 0;
   std::string lidar_log_path;
 } LivoxLidarLoggerCfg;
 
@@ -138,25 +138,25 @@ typedef struct {
 } DetectionData;
 
 typedef struct viewDevice {
-  uint32_t handle;
-  uint16_t cmd_port;
-  uint8_t dev_type;
+  uint32_t handle = 0;
+  uint16_t cmd_port = 0;
+  uint8_t dev_type = 0;
   std::atomic<bool> is_get={false}; 
   std::atomic<bool> is_set={false};
 } ViewDevice;
 
 
-typedef struct {
-  uint32_t handle;
-  uint8_t dev_type;
+typedef struct viewLidarIpInfo {
+  uint32_t handle = 0;
+  uint8_t dev_type = 0;
   std::string host_ip;
-  uint16_t lidar_cmd_port;
+  uint16_t lidar_cmd_port = 0;
 
-  uint16_t lidar_point_port;
-  uint16_t lidar_imu_data_port;
+  uint16_t lidar_point_port = 0;
+  uint16_t lidar_imu_data_port = 0;
 
-  uint16_t host_point_port;
-  uint16_t host_imu_data_port;
+  uint16_t host_point_port = 0;
+  uint16_t host_imu_data_port = 0;
 } ViewLidarIpInfo;
 
 
@@ -229,11 +229,11 @@ typedef struct {
   uint8_t enable;
 } EnableDeviceLoggerRequest;
 
-typedef struct {
+typedef struct lidarDeviceInfo {
   std::string   sn;
-  std::uint8_t  dev_type;
+  std::uint8_t  dev_type = 0;
   std::string   lidar_ip;
-  std::uint16_t cmd_port;
+  std::uint16_t cmd_port = 0;
 } LidarDeviceInfo;
 
 typedef struct {

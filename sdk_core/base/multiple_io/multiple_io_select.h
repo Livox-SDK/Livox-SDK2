@@ -42,8 +42,8 @@ class MultipleIOSelect : public MultipleIOBase {
   void PollDestroy();
  private:
   int max_fd_ = -1;
-  fd_set rfds_;
-  fd_set wfds_;
+  fd_set rfds_ = {};
+  fd_set wfds_ = {};
   int max_poll_size_ = 0;
 };
 
