@@ -2200,7 +2200,7 @@ class system_error : public std::runtime_error {
   FMT_API void init(int err_code, string_view format_str, format_args args);
 
  protected:
-  int error_code_;
+  int error_code_ = 0;
 
   system_error() : std::runtime_error("") {}
 
