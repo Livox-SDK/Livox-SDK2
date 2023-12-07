@@ -179,62 +179,65 @@ void GeneralCommandHandler::Handler(uint32_t handle, uint16_t lidar_port, uint8_
 }
 
 void GeneralCommandHandler::Handler(const uint8_t dev_type, const uint32_t handle, const uint16_t lidar_port,
-    uint8_t *buf, uint32_t buf_size) {
-  if (buf == nullptr || buf_size == 0) {
-    return;
-  }
-  
-  if (cmd_observer_cb_) {
-    cmd_observer_cb_(handle, reinterpret_cast<LivoxLidarCmdPacket*>(buf), cmd_observer_client_data_);
-  }
+	uint8_t* buf, uint32_t buf_size) {
+	if (buf == nullptr || buf_size == 0) {
+		return;
+	}
 
-  if (dev_type == kLivoxLidarTypePA && lidar_port == kPaLidarFaultPort) {
-    std::shared_ptr<CommandHandler> cmd_handler = GetLidarCommandHandler(dev_type);
-    if (cmd_handler == nullptr) {
-      LOG_ERROR("GeneralCommandHandler::Handler get cmd handler failed");
-      return;
-    }
-    Command command;
-    command.packet.data = buf;
-    command.packet.data_len = buf_size;
-    cmd_handler->Handle(handle, lidar_port, command);
-    return;
-  }
+	if (cmd_observer_cb_) {
+		cmd_observer_cb_(handle, reinterpret_cast<LivoxLidarCmdPacket*>(buf), cmd_observer_client_data_);
+	}
 
-  CommPacket packet;
-  memset(&packet, 0, sizeof(packet));
-  if (!(comm_port_->ParseCommStream((uint8_t*)buf, buf_size, &packet))) {
-    LOG_INFO("Parse Command Stream failed.");
-    return;
-  }
-  
-  if (lidar_port == kDetectionPort && packet.cmd_id == kCommandIDLidarSearch) {
-    if (packet.cmd_type == kCommandTypeCmd) {
-      return;
-    }
-    HandleDetectionData(handle, lidar_port, packet);
-    return;
-  }
+	if (dev_type == kLivoxLidarTypePA && lidar_port == kPaLidarFaultPort) {
+		std::shared_ptr<CommandHandler> cmd_handler = GetLidarCommandHandler(dev_type);
+		if (cmd_handler == nullptr) {
+			LOG_ERROR("GeneralCommandHandler::Handler get cmd handler failed");
+			return;
+		}
+		Command command;
+		command.packet.data = buf;
+		command.packet.data_len = buf_size;
+		cmd_handler->Handle(handle, lidar_port, command);
+		return;
+	}
 
-  std::shared_ptr<CommandHandler> cmd_handler = GetLidarCommandHandler(dev_type);
-  if (cmd_handler == nullptr) {
-    return;
-  }
+	CommPacket packet;
+	memset(&packet, 0, sizeof(packet));
+	if (!(comm_port_->ParseCommStream((uint8_t*)buf, buf_size, &packet))) {
+		LOG_INFO("Parse Command Stream failed.");
+		return;
+	}
 
-  Command command;
-  if (packet.cmd_type == kCommandTypeAck) {
-    uint16_t seq = packet.seq_num;
-    std::lock_guard<std::mutex> lock(commands_mutex_);
-    if (commands_.find(seq) != commands_.end()) {
-      command = commands_[seq].first;
-      command.packet = packet;
-      commands_.erase(seq);
-    }
-  } else if (packet.cmd_type == kCommandTypeCmd) {
-    command.packet = packet;
-    command.handle = handle;
-  }
-  cmd_handler->Handle(handle, lidar_port, command);
+	if (lidar_port == kDetectionPort && packet.cmd_id == kCommandIDLidarSearch) {
+		if (packet.cmd_type == kCommandTypeCmd) {
+			return;
+		}
+		HandleDetectionData(handle, lidar_port, packet);
+		return;
+	}
+
+	std::shared_ptr<CommandHandler> cmd_handler = GetLidarCommandHandler(dev_type);
+	if (cmd_handler == nullptr) {
+		return;
+	}
+
+	Command command;
+	if (packet.cmd_type == kCommandTypeAck) {
+		uint16_t seq = packet.seq_num;
+		std::lock_guard<std::mutex> lock(commands_mutex_);
+        auto commands_end = commands_.end();
+        auto commands_find = commands_.find(seq);
+		if (commands_find != commands_end) {
+			command = commands_[seq].first;
+			command.packet = packet;
+			commands_.erase(seq);
+		}
+	}
+	else if (packet.cmd_type == kCommandTypeCmd) {
+		command.packet = packet;
+		command.handle = handle;
+	}
+	cmd_handler->Handle(handle, lidar_port, command);
 }
 
 bool GeneralCommandHandler::VerifyNetSegment(const DetectionData* detection_data) {

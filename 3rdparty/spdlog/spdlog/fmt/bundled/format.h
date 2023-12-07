@@ -1460,9 +1460,9 @@ FMT_CONSTEXPR unsigned parse_nonnegative_int(
     ++begin;
     return 0;
   }
-  unsigned value = 0;
+  unsigned int value = 0;
   // Convert to unsigned to prevent a warning.
-  static constexpr int max_int = (std::numeric_limits<int>::max)();
+  constexpr auto max_int = (std::numeric_limits<int>::max)();
   auto big = max_int / 10;
   do {
     // Check for overflow.

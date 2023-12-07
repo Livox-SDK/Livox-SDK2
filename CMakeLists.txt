@@ -12,6 +12,10 @@ if (CMAKE_CROSSCOMPILING)
 		CACHE STRING "Result from TRY_RUN" FORCE)
 endif()
 
+if(MSVC)
+    string(APPEND CMAKE_CXX_FLAGS " /Zc:__cplusplus -Zc:inline -Zc:strictStrings /utf-8 /MP")
+endif()
+
 if (UNIX)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 endif(UNIX)
