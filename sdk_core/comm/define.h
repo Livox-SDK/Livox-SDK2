@@ -64,7 +64,7 @@ typedef struct hostNetInfo {
   uint16_t log_data_port = 0;
 } HostNetInfo;
 
-typedef struct {
+typedef struct generalCfgInfo {
   std::vector<uint16_t> cmd_key_set;
 } GeneralCfgInfo; 
 
@@ -81,7 +81,7 @@ typedef struct livoxLidarLoggerCfg {
   std::string lidar_log_path;
 } LivoxLidarLoggerCfg;
 
-typedef struct {
+typedef struct livoxLidarSdkFrameworkCfg {
   bool master_sdk;
 } LivoxLidarSdkFrameworkCfg;
 
@@ -128,7 +128,7 @@ typedef enum {
   kLidarSend = 1,
 } SendType;
 
-typedef struct {
+typedef struct detectionData {
   uint8_t ret_code;
   uint8_t dev_type;
   char sn[16];
@@ -159,13 +159,13 @@ typedef struct viewLidarIpInfo {
 } ViewLidarIpInfo;
 
 
-typedef struct {
+typedef struct livoxLidarIpInfoValue {
   uint8_t lidar_ipaddr[4];
   uint8_t lidar_subnet_mask[4];
   uint8_t lidar_gateway[4];
 } LivoxLidarIpInfoValue;
 
-typedef struct {
+typedef struct hostIpInfoValue {
   uint8_t host_ip[4];
   uint16_t host_port;
   uint16_t lidar_port;
@@ -223,7 +223,7 @@ typedef enum {
   kLidarLogPort = 56500
 } LidarPort;
 
-typedef struct {
+typedef struct enableDeviceLoggerRequest {
   uint8_t log_type;
   uint8_t enable;
 } EnableDeviceLoggerRequest;
@@ -235,7 +235,7 @@ typedef struct lidarDeviceInfo {
   std::uint16_t cmd_port = 0;
 } LidarDeviceInfo;
 
-typedef struct {
+typedef struct deviceLoggerFilePushRequest {
   uint8_t log_type;         // 0
   uint8_t file_index;       // file index
   uint8_t file_num;
@@ -247,7 +247,7 @@ typedef struct {
   uint8_t  data[1];         //data of log  
 } DeviceLoggerFilePushRequest;
 
-typedef struct {
+typedef struct deviceLoggerFilePushReponse {
   uint8_t ret_code;         // 0
   uint8_t log_type;         // file index
   uint8_t file_index;      // 0 for cfg, 1 for log
@@ -264,14 +264,14 @@ enum class Flag : uint8_t {
 using DataCallback = std::function<void(const uint32_t handle, const uint8_t dev_type, LivoxLidarEthernetPacket *data, void *client_data)>;
 using LidarInfoCallback = std::function<void(const uint32_t, const uint8_t, const char*, void*)>;
 
-typedef struct {
+typedef struct livoxLidarStartUpgradeRequest {
   uint8_t firmware_type;    /**< firmware type. */
   uint8_t encrypt_type;     /**< encrypt type. */
   uint32_t firmware_length; /**< the length of firmware. */
   uint8_t dev_type;         /**< the device type of the firmware. */
 } LivoxLidarStartUpgradeRequest;
 
-typedef struct {
+typedef struct livoxLidarStartUpgradeRequestV3 {
   uint8_t firmware_type;     /**< firmware type. */
   uint8_t encrypt_type;      /**< encrypt type. */
   uint32_t firmware_length;  /**< the length of firmware. */
@@ -281,11 +281,11 @@ typedef struct {
   uint8_t hw_whitelist[32]; /**< the hardware version list that this firmware can be used for. */
 } LivoxLidarStartUpgradeRequestV3;
 
-typedef struct {
+typedef struct livoxLidarStartUpgradeResponse {
   uint8_t ret_code; /**< Return code. */
 } LivoxLidarStartUpgradeResponse;
 
-typedef struct {
+typedef struct livoxLidarXferFirmwareResquest {
   uint32_t offset; /**< Return code. */
   uint32_t length; /**< Working state. */
   uint8_t encrypt_type;
@@ -293,34 +293,34 @@ typedef struct {
   uint8_t data[1]; /**< LiDAR feature. */
 } LivoxLidarXferFirmwareResquest;
 
-typedef struct {
+typedef struct livoxLidarXferFirmwareResponse {
   uint8_t ret_code; /**< Return code. */
   uint32_t offset;  /**< Return code. */
   uint32_t length;  /**< Working state. */
 } LivoxLidarXferFirmwareResponse;
 
-typedef struct {
+typedef struct livoxLidarCompleteXferFirmwareResquest {
   uint8_t checksum_type;   /**< Return code. */
   uint8_t checksum_length; /**< Working state. */
   uint8_t checksum[1];     /**< LiDAR feature. */
 } LivoxLidarCompleteXferFirmwareResquest;
 
-typedef struct {
+typedef struct livoxLidarCompleteXferFirmwareResponse {
   uint8_t ret_code; /**< Return code. */
 } LivoxLidarCompleteXferFirmwareResponse;
 
-typedef struct {
+typedef struct livoxLidarGetUpgradeProgressResponse {
   uint8_t ret_code; /**< Return code. */
   uint8_t progress; /**< progress of upgrade. */
 } LivoxLidarGetUpgradeProgressResponse;
 
-typedef struct {
+typedef struct livoxLidarRequestFirmwareInfoResponse {
   uint8_t ret_code; /**< Return code. */
   uint16_t length;  /**< The length of firmware info string, include '\0'. */
   uint8_t info[1];  /**< Firmware info string, include '\0'. */
 } LivoxLidarRequestFirmwareInfoResponse;
 
-typedef struct {
+typedef struct livoxLidarDebugPointCloudFileHeader {
   uint8_t file_ver;   /**< file format version. */
   uint8_t dev_type;   /**< the device type of the firmware. */
   uint8_t data_type;  /**< type of data. */
@@ -329,14 +329,14 @@ typedef struct {
   uint16_t crc16;
 } LivoxLidarDebugPointCloudFileHeader;
 
-typedef struct {
+typedef struct livoxLidarDebugPointCloudRequest {
   uint8_t   enable;
   uint8_t   host_ip_addr[4];
   uint16_t  host_port;
   uint16_t  bandwidth;
 } LivoxLidarDebugPointCloudRequest;
 
-typedef struct {
+typedef struct livoxLidarRmcSyncTimeRequest {
   enum class SyncTimeType : std::uint8_t {
     kRmcSyncTime = 2,
   } type;

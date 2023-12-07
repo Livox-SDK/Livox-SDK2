@@ -1461,7 +1461,7 @@ FMT_CONSTEXPR unsigned parse_nonnegative_int(
     return 0;
   }
 
-#ifdef FMT_MSC_VER
+#ifdef _MSC_VER
   unsigned int value = 0;
   // Convert to unsigned to prevent a warning.
   constexpr auto max_int = (std::numeric_limits<int>::max)();

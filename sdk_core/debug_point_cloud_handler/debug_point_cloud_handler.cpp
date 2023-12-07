@@ -118,4 +118,4 @@ bool DebugPointCloudHandler::Enable(bool enable) {
 }
 
 } // namespace lidar
-}  // namespace livox
+} // namespace livox

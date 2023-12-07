@@ -739,6 +739,7 @@ livox_status CommandImpl::SetLivoxLidarDebugPointCloud(uint32_t handle, bool ena
                                                                        , &req_buff.host_ip_addr[1]
                                                                        , &req_buff.host_ip_addr[2]
                                                                        , &req_buff.host_ip_addr[3]);
+  (void)sscanfResult;
   return GeneralCommandHandler::GetInstance().SendLoggerCommand(handle,
                     kCommandIDLidarDebugPointCloudControl,
                     reinterpret_cast<uint8_t*>(&req_buff),
