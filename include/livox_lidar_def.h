@@ -31,9 +31,9 @@
 
 #pragma pack(1)
 
-#define LIVOX_LIDAR_SDK_MAJOR_VERSION       3
-#define LIVOX_LIDAR_SDK_MINOR_VERSION       1
-#define LIVOX_LIDAR_SDK_PATCH_VERSION       1
+#define LIVOX_LIDAR_SDK_MAJOR_VERSION       1
+#define LIVOX_LIDAR_SDK_MINOR_VERSION       2
+#define LIVOX_LIDAR_SDK_PATCH_VERSION       5
 
 #define kBroadcastCodeSize 16
 
@@ -90,6 +90,7 @@ typedef enum {
   kKeyFovCfgEn                = 0x0017,
   kKeyDetectMode              = 0x0018,
   kKeyFuncIoCfg               = 0x0019,
+  kKeyWorkModeAfterBoot       = 0x0020,
   kKeyWorkMode                = 0x001A,
   kKeyGlassHeat               = 0x001B,
   kKeyImuDataEn               = 0x001C,
@@ -254,6 +255,12 @@ typedef enum {
   kLivoxLidarMotorStoping = 0x07,
   kLivoxLidarUpgrade = 0x08
 } LivoxLidarWorkMode;
+
+typedef enum {
+  kLivoxLidarWorkModeAfterBootDefault = 0x00,
+  kLivoxLidarWorkModeAfterBootNormal = 0x01,
+  kLivoxLidarWorkModeAfterBootWakeUp = 0x02
+} LivoxLidarWorkModeAfterBoot;
 
 typedef struct {
   float roll_deg;

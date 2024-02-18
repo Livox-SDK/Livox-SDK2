@@ -473,7 +473,7 @@ void DeviceManager::OnData(socket_t sock, void *client_data) {
     return;
   }
 
-  if (port == kMid360LidarDebugPointCloudPort) {
+  if (port == kMid360LidarDebugPointCloudPort || port == kHAPDebugPointCloudPort) {
     DebugPointCloudManager::GetInstance().Handler(handle, port, (uint8_t*)(buf.get()), size);
   }
 

@@ -110,6 +110,8 @@ class CommandImpl {
 
   static livox_status SetLivoxLidarRmcSyncTime(uint32_t handle, const char* rmc, uint16_t rmc_length, LivoxLidarRmcSyncTimeCallBack cb, void* client_data);
 
+  static livox_status SetLivoxLidarWorkModeAfterBoot(uint32_t handle, LivoxLidarWorkModeAfterBoot work_mode, LivoxLidarAsyncControlCallback cb, void* client_data);
+
   /*******Upgrade Module***********/    
   static livox_status LivoxLidarRequestReboot(uint32_t handle, LivoxLidarRebootCallback cb, void* client_data);
 

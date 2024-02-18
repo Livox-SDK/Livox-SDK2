@@ -298,6 +298,10 @@ livox_status SetLivoxLidarRmcSyncTime(uint32_t handle, const char* rmc, uint16_t
   return CommandImpl::SetLivoxLidarRmcSyncTime(handle, rmc, rmc_length, cb, client_data);
 }
 
+livox_status SetLivoxLidarWorkModeAfterBoot(const uint32_t handle,const LivoxLidarWorkModeAfterBoot work_mode, LivoxLidarAsyncControlCallback cb, void* client_data){
+  return CommandImpl::SetLivoxLidarWorkModeAfterBoot(handle, work_mode, cb, client_data);
+}
+
 // reset lidar
 livox_status LivoxLidarRequestReset(uint32_t handle, LivoxLidarResetCallback cb, void* client_data) {
   return CommandImpl::LivoxLidarRequestReset(handle, cb, client_data);

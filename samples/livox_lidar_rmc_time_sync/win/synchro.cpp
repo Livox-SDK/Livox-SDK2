@@ -29,7 +29,7 @@
 
 Synchro::Synchro() {
   hfile_ = INVALID_HANDLE_VALUE;
-  is_quite_ = false;
+  is_quit_ = false;
   rmc_buff_.resize(128,0);
 }
 
@@ -53,13 +53,13 @@ bool Synchro::Start() {
   if (!Open()) {
     return false;
   }
-  is_quite_ = false;
+  is_quit_ = false;
   listener_ = std::make_shared<std::thread>(&Synchro::IOLoop, this);
   return true;
 }
 
 void Synchro::Stop() {
-  is_quite_ = true;
+  is_quit_ = true;
   if (listener_) {
     listener_->join();
     listener_ = nullptr;
@@ -70,7 +70,7 @@ void Synchro::Stop() {
 void Synchro::IOLoop() {
   uint8_t buff[READ_BUF];
   size_t size = 0;
-  while (!is_quite_) {
+  while (!is_quit_) {
     if (0 < (size = Read(buff, READ_BUF))) {
       Decode(buff, size);
     }

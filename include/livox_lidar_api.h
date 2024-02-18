@@ -446,6 +446,15 @@ livox_status SetLivoxLidarDebugPointCloud(uint32_t handle, bool enable, LivoxLid
  */
 livox_status SetLivoxLidarRmcSyncTime(uint32_t handle, const char* rmc, uint16_t rmc_length, LivoxLidarRmcSyncTimeCallBack cb, void* client_data);
 
+/**
+ * Set LiDAR work mode after boot.
+ * @param  handle                 device handle.
+ * @param  work_mode              lidar work mode after boot.
+ * @param  cb                     callback for the command.
+ * @param  client_data            user data associated with the command.
+ * @return kStatusSuccess on successful return, see \ref LivoxStatus for other error code.
+ */
+livox_status SetLivoxLidarWorkModeAfterBoot(const uint32_t handle,const LivoxLidarWorkModeAfterBoot work_mode, LivoxLidarAsyncControlCallback cb, void* client_data);
 /*******Upgrade Module***********/
 
 /**

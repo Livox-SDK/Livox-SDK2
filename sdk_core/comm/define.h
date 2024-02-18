@@ -181,6 +181,7 @@ static const uint16_t kHAPPushMsgPort   = 56000;
 static const uint16_t kHAPPointDataPort = 57000;
 static const uint16_t kHAPIMUPort       = 58000;
 static const uint16_t kHAPLogPort       = 59000;
+static const uint16_t kHAPDebugPointCloudPort = 60000;
 
 /** kLogPort, which is the log port to be banned. */
 static const uint16_t kLogPort = 0;

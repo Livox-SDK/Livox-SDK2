@@ -1,6 +1,11 @@
 # Changelog
 
 All notable changes to Livox-SDK2 will be documentd in this file.
+## [1.2.5]
+### Added
+
+- Support saving debug point cloud of Hap.
+- Support setting the default work mode after boot of Hap.
 
 ## [1.2.4]
 ### Added
