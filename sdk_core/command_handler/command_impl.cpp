@@ -734,11 +734,12 @@ livox_status CommandImpl::SetLivoxLidarDebugPointCloud(uint32_t handle, bool ena
   req_buff.enable    = enable ? 1 : 0;
   req_buff.host_port = kHostDebugPointCloudPort; // 44332
   req_buff.bandwidth = 0;  // units Mbps
-  sscanf(GeneralCommandHandler::GetInstance().GetLidarCfg(handle).host_net_info.host_ip.c_str(),
+  auto sscanfResult = sscanf(GeneralCommandHandler::GetInstance().GetLidarCfg(handle).host_net_info.host_ip.c_str(),
                              "%" SCNu8 ".%" SCNu8 ".%" SCNu8 ".%" SCNu8, &req_buff.host_ip_addr[0]
                                                                        , &req_buff.host_ip_addr[1]
                                                                        , &req_buff.host_ip_addr[2]
                                                                        , &req_buff.host_ip_addr[3]);
+  (void)sscanfResult;
   return GeneralCommandHandler::GetInstance().SendLoggerCommand(handle,
                     kCommandIDLidarDebugPointCloudControl,
                     reinterpret_cast<uint8_t*>(&req_buff),

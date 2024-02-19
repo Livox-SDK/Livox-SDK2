@@ -112,8 +112,8 @@ private:
 class FastCRC14
 {
 public:
-#if !CRC_SW //NO Software-implemenation so far
-  FastCRC14();
+	FastCRC14() { seed = 0; };
+#if !CRC_SW //NO Software-implementation so far
   uint16_t darc(const uint8_t *data, const size_t datalen);
   uint16_t gsm(const uint8_t *data, const size_t datalen);
   uint16_t eloran(const uint8_t *data, const size_t datalen);

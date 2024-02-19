@@ -95,7 +95,11 @@ bool Firmware::ReadAndCheckHeader() {
   if (file_) {
     printf("All firmware data have be read successfully.\n");
   } else {
-    printf("Read firmware fail[%ld]!\n", file_.gcount());
+#ifdef _MSC_VER
+    printf("Read firmware fail[%lld]!\n", file_.gcount());
+#else
+    printf("Read firmware fail[%lid]!\n", file_.gcount());
+#endif
   }
 
   return true;

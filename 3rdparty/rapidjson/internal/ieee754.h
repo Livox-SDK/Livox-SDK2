@@ -26,7 +26,7 @@ namespace internal {
 
 class Double {
  public:
-  Double() {}
+  Double() { u_ = 0; }
   Double(double d) : d_(d) {}
   Double(uint64_t u) : u_(u) {}
 

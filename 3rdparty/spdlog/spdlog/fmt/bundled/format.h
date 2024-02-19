@@ -1348,11 +1348,13 @@ class arg_formatter_base {
   }
 
   void write(const char_type *value) {
-    if (!value)
-      FMT_THROW(format_error("string pointer is null"));
-    auto length = std::char_traits<char_type>::length(value);
-    basic_string_view<char_type> sv(value, length);
-    specs_ ? writer_.write(sv, *specs_) : writer_.write(sv);
+    if (value == nullptr) {
+          FMT_THROW(format_error("string pointer is null"));
+    } else {
+	    auto length = std::char_traits<char_type>::length(value);
+		basic_string_view<char_type> sv(value, length);
+		specs_ ? writer_.write(sv, *specs_) : writer_.write(sv);
+     }
   }
 
  public:
@@ -1458,19 +1460,37 @@ FMT_CONSTEXPR unsigned parse_nonnegative_int(
     ++begin;
     return 0;
   }
+
+#ifdef _MSC_VER
+  unsigned int value = 0;
+  // Convert to unsigned to prevent a warning.
+  constexpr auto max_int = (std::numeric_limits<int>::max)();
+  auto big = max_int / 10;
+  do {
+	  // Check for overflow.
+	  if (value > big) {
+		  value = max_int + 1;
+		  break;
+	  }
+	  value = value * 10 + unsigned(*begin - '0');
+	  ++begin;
+  } while (begin != end && '0' <= *begin && *begin <= '9');
+#else
   unsigned value = 0;
   // Convert to unsigned to prevent a warning.
   unsigned max_int = (std::numeric_limits<int>::max)();
   unsigned big = max_int / 10;
   do {
-    // Check for overflow.
-    if (value > big) {
-      value = max_int + 1;
-      break;
-    }
-    value = value * 10 + unsigned(*begin - '0');
-    ++begin;
+	  // Check for overflow.
+	  if (value > big) {
+		  value = max_int + 1;
+		  break;
+	  }
+	  value = value * 10 + unsigned(*begin - '0');
+	  ++begin;
   } while (begin != end && '0' <= *begin && *begin <= '9');
+#endif
+  
   if (value > max_int)
     eh.on_error("number is too big");
   return value;
@@ -2200,7 +2220,7 @@ class system_error : public std::runtime_error {
   FMT_API void init(int err_code, string_view format_str, format_args args);
 
  protected:
-  int error_code_;
+  int error_code_ = 0;
 
   system_error() : std::runtime_error("") {}
 
@@ -2367,7 +2387,7 @@ class basic_writer {
     basic_writer<Range> &writer;
     const Spec &spec;
     unsigned_type abs_value;
-    char prefix[4];
+    char prefix[4] = {0};
     unsigned prefix_size;
 
     string_view get_prefix() const { return string_view(prefix, prefix_size); }
