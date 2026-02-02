@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.24)
 
 set(DEMO_NAME livox_lidar_rmc_time_sync)
 if (WIN32)
