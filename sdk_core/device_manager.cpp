@@ -326,7 +326,7 @@ bool DeviceManager::CreateCommandChannel(const uint8_t dev_type, const HostNetIn
 
 #ifdef WIN32
 #else
-  if (dev_type == kLivoxLidarTypeMid360) {
+  if (dev_type == kLivoxLidarTypeMid360 || dev_type == kLivoxLidarTypeMid360s) {
     socket_t broadcast_socket = util::CreateSocket(host_net_info.push_msg_port, true, true, true, "255.255.255.255", "");
     if (broadcast_socket < 0) {
       LOG_ERROR("Create broadcast socket failed.");
@@ -693,6 +693,11 @@ void DeviceManager::AddViewLidar(const uint32_t handle, LivoxLidarDiagInternalIn
   if (view_lidar_info_ptr->dev_type == kLivoxLidarTypeMid360) {
     view_lidar_info_ptr->lidar_point_port = kMid360LidarPointCloudPort;
     view_lidar_info_ptr->lidar_imu_data_port = kMid360LidarImuDataPort;
+  }
+
+  if (view_lidar_info_ptr->dev_type == kLivoxLidarTypeMid360s) {
+    view_lidar_info_ptr->lidar_point_port = kMid360sLidarPointCloudPort;
+    view_lidar_info_ptr->lidar_imu_data_port = kMid360sLidarImuDataPort;
   }
 
   CreateViewDataChannel(*view_lidar_info_ptr);

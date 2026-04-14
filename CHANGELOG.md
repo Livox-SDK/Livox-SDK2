@@ -1,6 +1,17 @@
 # Changelog
 
 All notable changes to Livox-SDK2 will be documentd in this file.
+## [1.3.1]
+### Added
+
+- Support Mid-360s Lidar set esc mode;
+- Support Mid-360s Lidar set pps sync mode;
+
+## [1.3.0]
+### Added
+
+- Support Mid-360s Lidar;
+
 ## [1.2.5]
 ### Added
 

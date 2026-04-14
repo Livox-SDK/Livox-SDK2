@@ -78,6 +78,15 @@ void ImuDataCallback(uint32_t handle, const uint8_t dev_type,  LivoxLidarEtherne
 //   }
 // }
 
+void EscModeSetCallback(livox_status status, uint32_t handle, LivoxLidarAsyncControlResponse *response, void *client_data) {
+  printf("set lidar esc mode, please power off and on lidar!!!!\n");
+  if (response == nullptr) {
+    return;
+  }
+  printf("EscModeSetCallback, status:%u, handle:%u, ret_code:%u, error_key:%u",
+      status, handle, response->ret_code, response->error_key);
+}
+
 void WorkModeCallback(livox_status status, uint32_t handle,LivoxLidarAsyncControlResponse *response, void *client_data) {
   if (response == nullptr) {
     return;
@@ -157,6 +166,9 @@ void LidarInfoChangeCallback(const uint32_t handle, const LivoxLidarInfo* info, 
     return;
   } 
   printf("LidarInfoChangeCallback Lidar handle: %u SN: %s\n", handle, info->sn);
+
+  // set lidar esc mode
+  SetLivoxLidarEscMode(handle, kLivoxEscSpeedSlow, EscModeSetCallback, nullptr);
   
   // set the work mode to kLivoxLidarNormal, namely start the lidar
   SetLivoxLidarWorkMode(handle, kLivoxLidarNormal, WorkModeCallback, nullptr);

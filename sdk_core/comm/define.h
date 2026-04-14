@@ -208,6 +208,19 @@ static const uint16_t kPaLidarLogPort        = 1002;
 
 static const uint16_t kPaHostFaultPort = 42867;
 
+static const uint16_t kMid360sLidarCmdPort             = 56100;
+static const uint16_t kMid360sLidarPushMsgPort         = 56200;
+static const uint16_t kMid360sLidarPointCloudPort      = 56300;
+static const uint16_t kMid360sLidarImuDataPort         = 56400;
+static const uint16_t kMid360sLidarLogPort             = 56500;
+static const uint16_t kMid360sLidarDebugPointCloudPort = 60301;
+
+static const uint16_t kMid360sHostCmdPort        = 56101;
+static const uint16_t kMid360sHostPushMsgPort    = 56201;
+static const uint16_t kMid360sHostPointCloudPort = 56301;
+static const uint16_t kMid360sHostImuDataPort    = 56401;
+static const uint16_t kMid360sHostLogPort        = 56501;
+
 typedef enum {
   kCmd = 0,
   kPush = 1,

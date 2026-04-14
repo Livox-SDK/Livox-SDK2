@@ -32,8 +32,8 @@
 #pragma pack(1)
 
 #define LIVOX_LIDAR_SDK_MAJOR_VERSION       1
-#define LIVOX_LIDAR_SDK_MINOR_VERSION       2
-#define LIVOX_LIDAR_SDK_PATCH_VERSION       5
+#define LIVOX_LIDAR_SDK_MINOR_VERSION       3
+#define LIVOX_LIDAR_SDK_PATCH_VERSION       1
 
 #define kBroadcastCodeSize 16
 
@@ -66,6 +66,7 @@ typedef enum {
   kLivoxLidarTypeIndustrialHAP = 10,
   kLivoxLidarTypeHAP = 15,
   kLivoxLidarTypePA = 16,
+  kLivoxLidarTypeMid360s = 35,
 } LivoxLidarDeviceType;
 
 typedef enum {
@@ -96,6 +97,8 @@ typedef enum {
   kKeyImuDataEn               = 0x001C,
   kKeyFusaEn                  = 0x001D,
   kKeyForceHeatEn             = 0x001E,
+  kKeySetEscMode              = 0x0021,
+  kKeySetPpsSyncMode          = 0x0026,
 
   kKeyLogParamSet             = 0x7FFF,
 
@@ -257,6 +260,15 @@ typedef enum {
 } LivoxLidarWorkMode;
 
 typedef enum {
+  kLivoxPpsSyncNormal = 0x00,
+  kLivoxPpsSyncSpec = 0x01,
+} LivoxLidarPpsSyncMode;
+typedef enum {
+  kLivoxEscSpeedNormal = 0x00,
+  kLivoxEscSpeedSlow = 0x01,
+} LivoxLidarEscMode;
+
+typedef enum {
   kLivoxLidarWorkModeAfterBootDefault = 0x00,
   kLivoxLidarWorkModeAfterBootNormal = 0x01,
   kLivoxLidarWorkModeAfterBootWakeUp = 0x02
@@ -377,6 +389,7 @@ typedef struct {
   uint8_t             glass_heat;               // 0x001B
   uint8_t             imu_data_en;              // 0x001C
   uint8_t             fusa_en;                  // 0x001D
+  uint8_t             esc_mode;                 // 0x0021
 
   char                sn[16];                   // 0x8000
   char                product_info[64];         // 0x8001

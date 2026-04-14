@@ -101,6 +101,9 @@ class CommandImpl {
 
   static livox_status StartForcedHeating(uint32_t handle, LivoxLidarAsyncControlCallback cb, void* client_data);
   static livox_status StopForcedHeating(uint32_t handle, LivoxLidarAsyncControlCallback cb, void* client_data);
+  
+  static livox_status SetLivoxLidarPpsSyncMode(uint32_t handle, LivoxLidarPpsSyncMode pps_sync_mode, LivoxLidarAsyncControlCallback cb, void* client_data);
+  static livox_status SetLivoxLidarEscMode(uint32_t handle, LivoxLidarEscMode esc_mode, LivoxLidarAsyncControlCallback cb, void* client_data);
 
   static livox_status SetLivoxLidarLogParam(uint32_t handle, const LivoxLidarLogParam& log_param, LivoxLidarAsyncControlCallback cb, void* client_data);
 
