@@ -31,7 +31,7 @@ namespace livox {
 
 namespace lidar {
 
-static const size_t kPrefixDataSize = 18;
+[[maybe_unused]]static const size_t kPrefixDataSize = 18;
 
 DataHandler::DataHandler()
     : point_data_callbacks_(nullptr),

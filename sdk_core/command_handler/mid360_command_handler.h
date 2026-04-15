@@ -48,7 +48,7 @@ namespace lidar {
 class Mid360CommandHandler : public CommandHandler {
  public:
   Mid360CommandHandler(DeviceManager* device_manager);
-  ~Mid360CommandHandler() {}
+  virtual ~Mid360CommandHandler() {}
   virtual bool Init(bool is_view);
 
   virtual bool Init(const std::map<uint32_t, LivoxLidarCfg>& custom_lidars_cfg_map);
@@ -60,6 +60,8 @@ class Mid360CommandHandler : public CommandHandler {
 
   static void UpdateLidarCallback(livox_status status, uint32_t handle, LivoxLidarAsyncControlResponse *response, void *client_data);
   void AddDevice(const uint32_t handle);
+  
+
  private:
   void SetCustomLidar(const uint32_t handle, const uint16_t lidar_cmd_port, const LivoxLidarCfg& lidar_cfg);
   void SetViewLidar(const ViewLidarIpInfo& view_lidar_info);

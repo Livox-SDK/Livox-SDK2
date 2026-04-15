@@ -137,7 +137,7 @@ typedef struct {
   uint16_t cmd_port;
 } DetectionData;
 
-typedef struct {
+typedef  struct ViewDevice{
   uint32_t handle;
   uint16_t cmd_port;
   uint8_t dev_type;

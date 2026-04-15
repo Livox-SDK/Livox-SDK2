@@ -118,8 +118,8 @@ class Firmware {
   ~Firmware();
   bool Open(const char *firmware_path);
   void Close();
-
-  const uint32_t FirmwarePackageVersion() const { return header_.file_version; }
+            
+            uint32_t FirmwarePackageVersion() const { return header_.file_version; }
 
 
   LivoxEncryptFirmwareHeader header_;
