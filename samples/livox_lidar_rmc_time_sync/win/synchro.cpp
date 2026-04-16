@@ -31,6 +31,9 @@ Synchro::Synchro() {
   hfile_ = INVALID_HANDLE_VALUE;
   is_quit_ = false;
   rmc_buff_.resize(128,0);
+  baudrate_ = {};
+  cur_len_ = {};
+  parity_ = {};
 }
 
 Synchro::~Synchro() {
@@ -111,7 +114,8 @@ bool Synchro::ParseGps(uint8_t in_byte) {
      char crc[3] = {0};
      uint32_t crc_num = 0;
      strncpy(crc, &rmc_buff_[cur_len_ - 1], 2);
-     sscanf(crc, "%x", &crc_num);
+     crc[2] = '\0';
+     auto sscanfResult = sscanf(crc, "%x", &crc_num);
      result ^= (uint8_t)crc_num;
      if (result == 0) {
        return true;
@@ -215,12 +219,14 @@ int Synchro::Setup(enum BaudRate baud, enum Parity parity) {
 size_t Synchro::Read(uint8_t *buffer, size_t size) {
   DWORD len = 0;
   if (hfile_ !=  INVALID_HANDLE_VALUE) {
-    ReadFile(hfile_, buffer, size, &len, NULL);
-    return len;
-  } else {
-    return 0;
+    auto ReadFileResult = ReadFile(hfile_, buffer, size, &len, NULL);
+    if (ReadFileResult) {
+        return len;
+    }
   }
+  return 0;
 }
+
 
 
 

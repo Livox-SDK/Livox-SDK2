@@ -772,8 +772,10 @@ class GenericValue {
         kNullFlag,  kFalseFlag,       kTrueFlag,     kObjectFlag,
         kArrayFlag, kShortStringFlag, kNumberAnyFlag};
     RAPIDJSON_NOEXCEPT_ASSERT(type >= kNullType && type <= kNumberType);
-    data_.f.flags = defaultFlags[type];
-
+    if (type >= kNullType && type <= kNumberType)
+    {
+        data_.f.flags = defaultFlags[type];
+    }
     // Use ShortString to store empty string.
     if (type == kStringType) data_.ss.SetLength(0);
   }

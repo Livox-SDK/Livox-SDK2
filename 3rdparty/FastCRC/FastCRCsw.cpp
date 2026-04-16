@@ -74,7 +74,10 @@ uint32_t REV32( uint32_t value)
 
 /** Constructor
  */
-FastCRC7::FastCRC7(){}
+FastCRC7::FastCRC7()
+{
+	seed = {};
+}
 
 /** SMBUS CRC
  * aka CRC-8
@@ -104,7 +107,10 @@ uint8_t FastCRC7::crc7(const uint8_t *data, const size_t datalen)
 
 /** Constructor
  */
-FastCRC8::FastCRC8(){}
+FastCRC8::FastCRC8()
+{
+	seed = {};
+}
 
 /** SMBUS CRC
  * aka CRC-8
@@ -156,7 +162,10 @@ uint8_t FastCRC8::maxim(const uint8_t *data, const size_t datalen)
 // ================= 16-BIT CRC ===================
 /** Constructor
  */
-FastCRC16::FastCRC16(){}
+FastCRC16::FastCRC16()
+{
+	seed = {};
+}
 
 #define crc_n4(crc, data, table) crc ^= data; \
 	crc = pgm_read_word(&table[(crc & 0xff) + 0x300]) ^		\
@@ -416,7 +425,10 @@ uint16_t FastCRC16::x25(const uint8_t *data, const size_t datalen)
 // ================= 32-BIT CRC ===================
 /** Constructor
  */
-FastCRC32::FastCRC32(){}
+FastCRC32::FastCRC32()
+{
+	seed = {};
+}
 
 #define crc_n4d(crc, data, table) crc ^= data; \
 	crc = pgm_read_dword(&table[(crc & 0xff) + 0x300]) ^	\

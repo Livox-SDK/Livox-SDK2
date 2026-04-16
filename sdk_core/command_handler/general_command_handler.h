@@ -45,10 +45,10 @@
 namespace livox {
 namespace lidar {
 
-typedef struct {
+typedef struct deviceInfo {
   std::string sn;
   std::string lidar_ip;
-  uint8_t dev_type;
+  uint8_t dev_type = 0;
   std::atomic<bool> is_update_cfg;
   std::atomic<bool> is_get_loader_mode;
   std::atomic<bool> is_loader_mode;

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.16.0 FATAL_ERROR)
 
 project(livox_sdk2)
 
@@ -10,6 +10,10 @@ if (CMAKE_CROSSCOMPILING)
 	set(THREADS_PTHREAD_ARG
 		"PLEASE_FILL_OUT-FAILED_TO_RUN"
 		CACHE STRING "Result from TRY_RUN" FORCE)
+endif()
+
+if(MSVC)
+    string(APPEND CMAKE_CXX_FLAGS " /Zc:__cplusplus -Zc:inline -Zc:strictStrings /utf-8 /MP")
 endif()
 
 if (UNIX)

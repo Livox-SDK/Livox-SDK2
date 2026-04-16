@@ -25,7 +25,13 @@ void DebugPointCloudManager::AddDevice(const uint32_t handle, const DetectionDat
                                                 detection_data->lidar_ip[1],
                                                 detection_data->lidar_ip[2],
                                                 detection_data->lidar_ip[3]);
-    devices_info_.emplace(handle, LidarDeviceInfo{detection_data->sn, detection_data->dev_type, ip, detection_data->cmd_port});
+    LidarDeviceInfo deviceInfo;
+    deviceInfo.sn = detection_data->sn;
+    deviceInfo.dev_type = detection_data->dev_type;
+    deviceInfo.lidar_ip = ip;
+    deviceInfo.cmd_port = detection_data->cmd_port;
+
+    devices_info_.emplace(handle, deviceInfo);
   }
 }
 
@@ -58,6 +64,5 @@ bool DebugPointCloudManager::SetStorePath(std::string path) {
   return true;
 }
 
-
 } // namespace lidar
-}  // namespace livox
+} // namespace livox
