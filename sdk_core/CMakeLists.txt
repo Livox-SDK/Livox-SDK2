@@ -52,14 +52,16 @@ set(LIVOX_PUBLIC_INCLUDE_DIR
 target_include_directories(
         ${SDK_LIBRARY_STATIC}
         PUBLIC
-        ${LIVOX_PUBLIC_INCLUDE_DIR}
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>
+        $<INSTALL_INTERFACE:include>
         PRIVATE
         ${LIVOX_PRIVATE_INCLUDE_DIR}
         )        
 target_include_directories(
         ${SDK_LIBRARY_SHARED}
         PUBLIC
-        ${LIVOX_PUBLIC_INCLUDE_DIR}
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>
+        $<INSTALL_INTERFACE:include>
         PRIVATE
         ${LIVOX_PRIVATE_INCLUDE_DIR}
         )
@@ -139,6 +141,14 @@ target_sources(${SDK_LIBRARY_SHARED}
         )
 
 install(TARGETS ${SDK_LIBRARY_STATIC} ${SDK_LIBRARY_SHARED}
-        PUBLIC_HEADER DESTINATION include
-        ARCHIVE DESTINATION lib
-        LIBRARY DESTINATION lib)
+        EXPORT ${PROJECT_NAME}-config
+        RUNTIME DESTINATION lib
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib)
+
+install(EXPORT ${PROJECT_NAME}-config
+        NAMESPACE ${PROJECT_NAME}::
+        DESTINATION lib/cmake/${PROJECT_NAME})
+
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/
+        DESTINATION include)
