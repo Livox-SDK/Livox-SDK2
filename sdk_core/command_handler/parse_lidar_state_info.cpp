@@ -214,6 +214,10 @@ bool ParseLidarStateInfo::ParseStateInfo(const CommPacket& packet,
         key_mask.insert(kKeyRoiMode);
         memcpy(&info.ROI_Mode, &packet.data[offset], val_len);
         break;
+      case static_cast<uint16_t>(kKeySetEscMode) :
+        key_mask.insert(kKeySetEscMode);
+        memcpy(&info.esc_mode, &packet.data[offset], val_len);
+        break;
       default :
         break;
     }
@@ -566,6 +570,11 @@ void ParseLidarStateInfo::LivoxLidarStateInfoToJson(const DirectLidarStateInfo& 
   if (key_mask.find(kKeyFusaEn) != key_mask.end()) {
     write.Key("fusa_en");
     write.Uint(info.fusa_en);
+  }
+
+  if (key_mask.find(kKeySetEscMode) != key_mask.end()) {
+    write.Key("esc_mode");
+    write.Uint(info.esc_mode);
   }
   
   if (key_mask.find(kKeySn) != key_mask.end()) {
