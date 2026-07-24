@@ -368,6 +368,25 @@ livox_status SetLivoxLidarPpsSyncMode(uint32_t handle, LivoxLidarPpsSyncMode pps
  */
 livox_status SetLivoxLidarEscMode(uint32_t handle, LivoxLidarEscMode esc_mode, LivoxLidarAsyncControlCallback cb, void* client_data);
 
+// only mid360s support this function.
+/**
+ * Set LiDAR IMU range (output rate, accelerometer full-scale, gyroscope full-scale).
+ * @param  handle                 device handle.
+ * @param  imu_out_rate           IMU output rate: 0=200Hz, 1=500Hz, 2=100Hz, 3=50Hz.
+ * @param  accel_range            Accelerometer range: 0=+/-4g, 1=+/-8g, 2=+/-16g, 3=+/-32g.
+ * @param  gyro_range             Gyroscope range: 0=+/-2000dps, 1=+/-1000dps, 2=+/-500dps,
+ *                                3=+/-250dps, 4=+/-125dps, 5=+/-62.5dps, 6=+/-31.25dps,
+ *                                7=+/-15.625dps.
+ * @param  cb                     callback for the command.
+ * @param  client_data            user data associated with the command.
+ * @return kStatusSuccess on successful return, see \ref LivoxStatus for other error code.
+ */
+livox_status SetLivoxLidarImuRange(uint32_t handle,
+                                   LivoxLidarImuOutRate imu_out_rate,
+                                   LivoxLidarAccelRange accel_range,
+                                   LivoxLidarGyroRange  gyro_range,
+                                   LivoxLidarAsyncControlCallback cb, void* client_data);
+
 /**
  * Set LiDAR glass heat.
  * @param  handle                 device handle.

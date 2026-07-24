@@ -105,6 +105,10 @@ class CommandImpl {
   static livox_status SetLivoxLidarPpsSyncMode(uint32_t handle, LivoxLidarPpsSyncMode pps_sync_mode, LivoxLidarAsyncControlCallback cb, void* client_data);
   static livox_status SetLivoxLidarEscMode(uint32_t handle, LivoxLidarEscMode esc_mode, LivoxLidarAsyncControlCallback cb, void* client_data);
 
+  static livox_status SetLivoxLidarImuRange(uint32_t handle, LivoxLidarImuOutRate imu_out_rate,
+      LivoxLidarAccelRange accel_range, LivoxLidarGyroRange gyro_range,
+      LivoxLidarAsyncControlCallback cb, void* client_data);
+
   static livox_status SetLivoxLidarLogParam(uint32_t handle, const LivoxLidarLogParam& log_param, LivoxLidarAsyncControlCallback cb, void* client_data);
 
   static livox_status LivoxLidarRequestReset(uint32_t handle, LivoxLidarResetCallback cb, void* client_data);

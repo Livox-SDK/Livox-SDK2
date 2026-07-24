@@ -1,6 +1,16 @@
 # Changelog
 
 All notable changes to Livox-SDK2 will be documentd in this file.
+## [1.3.3]
+### Added
+
+- Support Mid-360s Lidar set IMU range
+
+## [1.3.2]
+### Added
+
+- Optimization Lidar log and debug pcl record
+
 ## [1.3.1]
 ### Added
 

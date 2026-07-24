@@ -33,7 +33,7 @@
 
 #define LIVOX_LIDAR_SDK_MAJOR_VERSION       1
 #define LIVOX_LIDAR_SDK_MINOR_VERSION       3
-#define LIVOX_LIDAR_SDK_PATCH_VERSION       1
+#define LIVOX_LIDAR_SDK_PATCH_VERSION       3
 
 #define kBroadcastCodeSize 16
 
@@ -99,6 +99,7 @@ typedef enum {
   kKeyForceHeatEn             = 0x001E,
   kKeySetEscMode              = 0x0021,
   kKeySetPpsSyncMode          = 0x0026,
+  kKeySetImuRange             = 0x002B,
 
   kKeyLogParamSet             = 0x7FFF,
 
@@ -269,6 +270,37 @@ typedef enum {
 } LivoxLidarEscMode;
 
 typedef enum {
+  kLivoxLidarImuOutRate200Hz = 0x00,
+  kLivoxLidarImuOutRate500Hz = 0x01,
+  kLivoxLidarImuOutRate100Hz = 0x02,
+  kLivoxLidarImuOutRate50Hz  = 0x03
+} LivoxLidarImuOutRate;
+
+typedef enum {
+  kLivoxLidarAccelRange4G  = 0x00,
+  kLivoxLidarAccelRange8G  = 0x01,
+  kLivoxLidarAccelRange16G = 0x02,
+  kLivoxLidarAccelRange32G = 0x03
+} LivoxLidarAccelRange;
+
+typedef enum {
+  kLivoxLidarGyroRange2000Dps    = 0x00,
+  kLivoxLidarGyroRange1000Dps    = 0x01,
+  kLivoxLidarGyroRange500Dps     = 0x02,
+  kLivoxLidarGyroRange250Dps     = 0x03,
+  kLivoxLidarGyroRange125Dps     = 0x04,
+  kLivoxLidarGyroRange62_5Dps    = 0x05,
+  kLivoxLidarGyroRange31_25Dps   = 0x06,
+  kLivoxLidarGyroRange15_625Dps  = 0x07
+} LivoxLidarGyroRange;
+
+typedef struct {
+  uint8_t imu_out_rate;   /**< IMU output rate, refer to \ref LivoxLidarImuOutRate. */
+  uint8_t accel_range;    /**< Accelerometer range, refer to \ref LivoxLidarAccelRange. */
+  uint8_t gyro_range;     /**< Gyroscope range, refer to \ref LivoxLidarGyroRange. */
+} LivoxLidarImuRange;
+
+typedef enum {
   kLivoxLidarWorkModeAfterBootDefault = 0x00,
   kLivoxLidarWorkModeAfterBootNormal = 0x01,
   kLivoxLidarWorkModeAfterBootWakeUp = 0x02
@@ -410,6 +442,7 @@ typedef struct {
   uint8_t             fw_type;                  // 0x8010
   uint32_t            hms_code[8];              // 0x8011
   uint8_t             ROI_Mode;                 // 0xFFFE
+  LivoxLidarImuRange  imu_range;                // 0x002B
 } DirectLidarStateInfo;
 
 typedef struct {

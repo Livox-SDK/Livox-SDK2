@@ -30,6 +30,7 @@
 #include <memory>
 #include <functional>
 #include <vector>
+#include <cstdint>
 #include <atomic>
 
 #include "livox_lidar_def.h"
@@ -352,7 +353,7 @@ typedef struct {
 } LivoxLidarDebugPointCloudRequest;
 
 typedef struct {
-  enum class SyncTimeType : std::uint8_t {
+  enum class SyncTimeType : uint8_t {
     kRmcSyncTime = 2,
   } type;
   uint64_t ns;

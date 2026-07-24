@@ -78,8 +78,17 @@ void ImuDataCallback(uint32_t handle, const uint8_t dev_type,  LivoxLidarEtherne
 //   }
 // }
 
+void ImuRangeSetCallback(livox_status status, uint32_t handle, LivoxLidarAsyncControlResponse *response, void *client_data) {
+  printf("set lidar imu range, please power off and on lidar!!!!\n");
+  if (response == nullptr) {
+    return;
+  }
+  printf("ImuRangeSetCallback, status:%u, handle:%u, ret_code:%u, error_key:%u",
+      status, handle, response->ret_code, response->error_key);
+}
+
 void EscModeSetCallback(livox_status status, uint32_t handle, LivoxLidarAsyncControlResponse *response, void *client_data) {
-  printf("set lidar esc mode, please power off and on lidar!!!!\n");
+  printf("set lidar esc mode!!!!\n");
   if (response == nullptr) {
     return;
   }
@@ -167,13 +176,16 @@ void LidarInfoChangeCallback(const uint32_t handle, const LivoxLidarInfo* info, 
   } 
   printf("LidarInfoChangeCallback Lidar handle: %u SN: %s\n", handle, info->sn);
 
-  // set lidar esc mode
+  // set lidar esc mode 0x0021
   SetLivoxLidarEscMode(handle, kLivoxEscSpeedSlow, EscModeSetCallback, nullptr);
   
   // set the work mode to kLivoxLidarNormal, namely start the lidar
   SetLivoxLidarWorkMode(handle, kLivoxLidarNormal, WorkModeCallback, nullptr);
 
   QueryLivoxLidarInternalInfo(handle, QueryInternalInfoCallback, nullptr);
+
+  // set lidar imu range 0x002B
+  SetLivoxLidarImuRange(handle, kLivoxLidarImuOutRate500Hz, kLivoxLidarAccelRange8G, kLivoxLidarGyroRange1000Dps, ImuRangeSetCallback, nullptr);
 
   // LivoxLidarIpInfo lidar_ip_info;
   // strcpy(lidar_ip_info.ip_addr, "192.168.1.10");

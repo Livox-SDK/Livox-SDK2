@@ -284,6 +284,12 @@ livox_status SetLivoxLidarEscMode(uint32_t handle, LivoxLidarEscMode esc_mode, L
   return CommandImpl::SetLivoxLidarEscMode(handle, esc_mode, cb, client_data);
 }
 
+livox_status SetLivoxLidarImuRange(uint32_t handle, LivoxLidarImuOutRate imu_out_rate,
+    LivoxLidarAccelRange accel_range, LivoxLidarGyroRange gyro_range,
+    LivoxLidarAsyncControlCallback cb, void* client_data) {
+  return CommandImpl::SetLivoxLidarImuRange(handle, imu_out_rate, accel_range, gyro_range, cb, client_data);
+}
+
 livox_status EnableLivoxLidarImuData(uint32_t handle, LivoxLidarAsyncControlCallback cb, void* client_data) {
   return CommandImpl::EnableLivoxLidarImuData(handle, cb, client_data);
 }
