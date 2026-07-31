@@ -43,8 +43,8 @@ void PointCloudCallback(uint32_t handle, const uint8_t dev_type, LivoxLidarEther
   if (data == nullptr) {
     return;
   }
-  printf("point cloud handle: %u, data_num: %d, data_type: %d, length: %d, frame_counter: %d\n",
-      handle, data->dot_num, data->data_type, data->length, data->frame_cnt);
+  printf("point cloud handle: %u, data_num: %d, data_type: %d, length: %d, udp_counter: %d\n",
+      handle, data->dot_num, data->data_type, data->length, data->udp_cnt);
 
   if (data->data_type == kLivoxLidarCartesianCoordinateHighData) {
     LivoxLidarCartesianHighRawPoint *p_point_data = (LivoxLidarCartesianHighRawPoint *)data->data;
@@ -58,6 +58,20 @@ void PointCloudCallback(uint32_t handle, const uint8_t dev_type, LivoxLidarEther
     LivoxLidarCartesianLowRawPoint *p_point_data = (LivoxLidarCartesianLowRawPoint *)data->data;
   } else if (data->data_type == kLivoxLidarSphericalCoordinateData) {
     LivoxLidarSpherPoint* p_point_data = (LivoxLidarSpherPoint *)data->data;
+  } else if (data->data_type == kLivoxLidarDoubleEchoData) {
+    LivoxLidarDoubleEchoRawPoint* p_point_data = (LivoxLidarDoubleEchoRawPoint *)data->data;
+    for (uint32_t i = 0; i < data->dot_num; i++) {
+      //p_point_data[i].x1;
+      //p_point_data[i].y1;
+      //p_point_data[i].z1;
+      //p_point_data[i].reflectivity1;
+      //p_point_data[i].tag1;
+      //p_point_data[i].x2;
+      //p_point_data[i].y2;
+      //p_point_data[i].z2;
+      //p_point_data[i].reflectivity2;
+      //p_point_data[i].tag2;
+    }
   }
 }
 
@@ -78,21 +92,20 @@ void ImuDataCallback(uint32_t handle, const uint8_t dev_type,  LivoxLidarEtherne
 //   }
 // }
 
-void ImuRangeSetCallback(livox_status status, uint32_t handle, LivoxLidarAsyncControlResponse *response, void *client_data) {
-  printf("set lidar imu range, please power off and on lidar!!!!\n");
-  if (response == nullptr) {
-    return;
-  }
-  printf("ImuRangeSetCallback, status:%u, handle:%u, ret_code:%u, error_key:%u",
-      status, handle, response->ret_code, response->error_key);
-}
-
 void EscModeSetCallback(livox_status status, uint32_t handle, LivoxLidarAsyncControlResponse *response, void *client_data) {
-  printf("set lidar esc mode!!!!\n");
+  printf("set lidar esc mode, please power off and on lidar!!!!\n");
   if (response == nullptr) {
     return;
   }
   printf("EscModeSetCallback, status:%u, handle:%u, ret_code:%u, error_key:%u",
+      status, handle, response->ret_code, response->error_key);
+}
+
+void PclTypeCallback(livox_status status, uint32_t handle, LivoxLidarAsyncControlResponse *response, void *client_data) {
+  if (response == nullptr) {
+    return;
+  }
+  printf("PclTypeCallback, status:%u, handle:%u, ret_code:%u, error_key:%u",
       status, handle, response->ret_code, response->error_key);
 }
 
@@ -176,16 +189,16 @@ void LidarInfoChangeCallback(const uint32_t handle, const LivoxLidarInfo* info, 
   } 
   printf("LidarInfoChangeCallback Lidar handle: %u SN: %s\n", handle, info->sn);
 
-  // set lidar esc mode 0x0021
+  // set lidar esc mode
   SetLivoxLidarEscMode(handle, kLivoxEscSpeedSlow, EscModeSetCallback, nullptr);
   
   // set the work mode to kLivoxLidarNormal, namely start the lidar
   SetLivoxLidarWorkMode(handle, kLivoxLidarNormal, WorkModeCallback, nullptr);
 
-  QueryLivoxLidarInternalInfo(handle, QueryInternalInfoCallback, nullptr);
+  // set the data type to 
+  SetLivoxLidarPclDataType(handle, kLivoxLidarDoubleEchoData, PclTypeCallback, nullptr);
 
-  // set lidar imu range 0x002B
-  SetLivoxLidarImuRange(handle, kLivoxLidarImuOutRate500Hz, kLivoxLidarAccelRange8G, kLivoxLidarGyroRange1000Dps, ImuRangeSetCallback, nullptr);
+  QueryLivoxLidarInternalInfo(handle, QueryInternalInfoCallback, nullptr);
 
   // LivoxLidarIpInfo lidar_ip_info;
   // strcpy(lidar_ip_info.ip_addr, "192.168.1.10");

@@ -153,7 +153,6 @@ livox_status LoggerManager::StartLogger(const uint32_t handle, const LivoxLidarL
   }
 
   LOG_INFO("Start Logger handler: {}, log_type: {}", handle, log_type);
-
   if (handlers_.find(handle) == handlers_.end()) {
     if (devices_info_.find(handle) != devices_info_.end()) {
       auto serial_num = devices_info_[handle].sn;

@@ -1,6 +1,28 @@
 # Changelog
 
 All notable changes to Livox-SDK2 will be documentd in this file.
+## [1.4.3]
+### Added
+
+- Support avia2 Lidar add ip_set and info_query samples;
+
+## [1.4.2]
+### Added
+
+- Support avia2 Lidar Query and push interface add more key;
+
+## [1.4.1]
+### Added
+
+- Support avia2 Lidar set ITO mode;
+- Support avia2 Lidar set fog_filter_mode;
+- delete upgrade firmware trans delay(5ms);
+
+## [1.4.0]
+### Added
+
+- Support avia2 Lidar;
+
 ## [1.3.3]
 ### Added
 
@@ -10,6 +32,7 @@ All notable changes to Livox-SDK2 will be documentd in this file.
 ### Added
 
 - Optimization Lidar log and debug pcl record
+
 
 ## [1.3.1]
 ### Added

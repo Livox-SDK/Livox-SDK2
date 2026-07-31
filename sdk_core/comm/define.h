@@ -160,6 +160,9 @@ typedef struct {
   uint16_t host_imu_data_port;
 } ViewLidarIpInfo;
 
+typedef struct {
+  uint8_t server_ipaddr[4];
+} NTPServerIpInfoValue;
 
 typedef struct {
   uint8_t lidar_ipaddr[4];
@@ -221,6 +224,19 @@ static const uint16_t kMid360sHostPushMsgPort    = 56201;
 static const uint16_t kMid360sHostPointCloudPort = 56301;
 static const uint16_t kMid360sHostImuDataPort    = 56401;
 static const uint16_t kMid360sHostLogPort        = 56501;
+
+static const uint16_t kAvia2LidarCmdPort             = 56100;
+static const uint16_t kAvia2LidarPushMsgPort         = 56200;
+static const uint16_t kAvia2LidarPointCloudPort      = 56300;
+static const uint16_t kAvia2LidarImuDataPort         = 56400;
+static const uint16_t kAvia2LidarLogPort             = 56500;
+static const uint16_t kAvia2LidarDebugPointCloudPort = 60301;
+
+static const uint16_t kAvia2HostCmdPort        = 56101;
+static const uint16_t kAvia2HostPushMsgPort    = 56201;
+static const uint16_t kAvia2HostPointCloudPort = 56301;
+static const uint16_t kAvia2HostImuDataPort    = 56401;
+static const uint16_t kAvia2HostLogPort        = 56501;
 
 typedef enum {
   kCmd = 0,

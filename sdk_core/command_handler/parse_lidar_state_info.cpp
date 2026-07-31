@@ -218,6 +218,31 @@ bool ParseLidarStateInfo::ParseStateInfo(const CommPacket& packet,
         key_mask.insert(kKeySetEscMode);
         memcpy(&info.esc_mode, &packet.data[offset], val_len);
         break;
+      case static_cast<uint16_t>(kKeySetFovMode) :
+        key_mask.insert(kKeySetFovMode);
+        memcpy(&info.fov_mode, &packet.data[offset], val_len);
+        break;
+      case static_cast<uint16_t>(kKeySetEchoMode) :
+        key_mask.insert(kKeySetEchoMode);
+        memcpy(&info.echo_mode, &packet.data[offset], val_len);
+        break;
+      case static_cast<uint16_t>(kKeySetNTPServerIp) : {
+        key_mask.insert(kKeySetNTPServerIp);
+        uint8_t ip[4];
+        memcpy(ip, &packet.data[offset], sizeof(uint8_t) * 4);
+        std::string ip_str = std::to_string(ip[0]) + "." + std::to_string(ip[1]) + "." +
+            std::to_string(ip[2]) + "." + std::to_string(ip[3]);
+        strcpy(info.ntp_server_ip.host_ip, ip_str.c_str());
+        break;
+      }
+      case static_cast<uint16_t>(kKeySetITOCtrl) :
+        key_mask.insert(kKeySetITOCtrl);
+        memcpy(&info.ito_mode, &packet.data[offset], val_len);
+        break;
+      case static_cast<uint16_t>(kKeySetFogNoiseFilter) :
+        key_mask.insert(kKeySetFogNoiseFilter);
+        memcpy(&info.fog_noise_filter, &packet.data[offset], val_len);
+        break;
       case static_cast<uint16_t>(kKeySetImuRange) :
         key_mask.insert(kKeySetImuRange);
         memcpy(&info.imu_range, &packet.data[offset], val_len);
@@ -581,6 +606,31 @@ void ParseLidarStateInfo::LivoxLidarStateInfoToJson(const DirectLidarStateInfo& 
     write.Uint(info.esc_mode);
   }
 
+    if (key_mask.find(kKeySetFovMode) != key_mask.end()) {
+    write.Key("fov_mode");
+    write.Uint(info.fov_mode);
+  }
+
+  if (key_mask.find(kKeySetEchoMode) != key_mask.end()) {
+    write.Key("echo_mode");
+    write.Uint(info.echo_mode);
+  }
+
+  if (key_mask.find(kKeySetNTPServerIp) != key_mask.end()) {
+    write.Key("ntp_server_ip");
+    write.String(info.ntp_server_ip.host_ip);
+  }
+
+  if (key_mask.find(kKeySetITOCtrl) != key_mask.end()) {
+    write.Key("ito_mode");
+    write.Uint(info.ito_mode);
+  }
+
+  if (key_mask.find(kKeySetFogNoiseFilter) != key_mask.end()) {
+    write.Key("fog_noise_filter");
+    write.Uint(info.fog_noise_filter);
+  }
+
   if (key_mask.find(kKeySetImuRange) != key_mask.end()) {
     write.Key("imu_range");
     write.StartObject();
@@ -592,7 +642,7 @@ void ParseLidarStateInfo::LivoxLidarStateInfoToJson(const DirectLidarStateInfo& 
     write.Uint(info.imu_range.gyro_range);
     write.EndObject();
   }
-  
+
   if (key_mask.find(kKeySn) != key_mask.end()) {
     write.Key("sn");
     write.String(info.sn);
