@@ -26,6 +26,7 @@
 #define LIVOX_DEFINE_H_
 
 #include <stdio.h>
+#include <cstdint>
 #include <string>
 #include <memory>
 #include <functional>
@@ -262,9 +263,9 @@ typedef struct {
 
 typedef struct {
   std::string   sn;
-  std::uint8_t  dev_type;
+  uint8_t  dev_type;
   std::string   lidar_ip;
-  std::uint16_t cmd_port;
+  uint16_t cmd_port;
 } LidarDeviceInfo;
 
 typedef struct {
