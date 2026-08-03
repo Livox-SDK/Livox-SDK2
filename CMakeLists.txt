@@ -13,7 +13,7 @@ if (CMAKE_CROSSCOMPILING)
 endif()
 
 if (UNIX)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -include cstdint")
 endif(UNIX)
 
 add_subdirectory(sdk_core)
