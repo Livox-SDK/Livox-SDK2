@@ -29,6 +29,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <netdb.h>
+#include <iostream>
 
 namespace livox {
 namespace lidar {
@@ -36,7 +37,7 @@ namespace util {
 
 socket_t CreateSocket(uint16_t port, bool nonblock, bool reuse_port, bool is_broadcast, const std::string netif, const std::string multicast_ip) {
   int status = -1;
-  int on = -1;
+  int on = 1; // ここを 1 に変更
   int sock = -1;
   int recv_buff_size = 1024 * 1024 * 200;
   struct sockaddr_in servaddr;
@@ -85,14 +86,26 @@ socket_t CreateSocket(uint16_t port, bool nonblock, bool reuse_port, bool is_bro
       servaddr.sin_addr.s_addr = inet_addr(netif.c_str());
     }
   }
+  servaddr.sin_addr.s_addr = INADDR_ANY;
   servaddr.sin_port = htons(port);
 
+   // macOS で複数のソケットに同じポートをバインドする場合は SO_REUSEPORT を併用
+  #ifdef SO_REUSEPORT
+  status = setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, (char *)&on, sizeof(on));
+  if (status != 0) {
+    perror("setsockopt(SO_REUSEPORT) failed");
+    close(sock);
+    return -1;
+  }
+  #endif
   status = bind(sock, (const struct sockaddr *)&servaddr, sizeof(servaddr));
+
   if (status != 0) {
     printf("bind failed\n");
     close(sock);
     return -1;
   }
+
 
   if (is_broadcast) {
     status = setsockopt(sock, SOL_SOCKET, SO_BROADCAST,
