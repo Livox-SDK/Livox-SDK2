@@ -404,7 +404,12 @@ void basic_buffer<T>::append(const U *begin, const U *end) {
 // type in this mode. If this is the case __cpp_char8_t will be defined.
 #if !defined(__cpp_char8_t)
 // A UTF-8 code unit type.
-enum char8_t: unsigned char {};
+// NOTE: originally `enum char8_t: unsigned char {}`. Newer libc++ leaves the
+// primary template `std::char_traits` undefined, so instantiating
+// `basic_string_view<fmt::char8_t>` (the enum) fails. Aliasing to `char` keeps
+// `basic_string_view<char>` machinery happy without breaking call sites
+// that take/return `const char8_t*`.
+using char8_t = char;
 #endif
 
 // A UTF-8 string view.

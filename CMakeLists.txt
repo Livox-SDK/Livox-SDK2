@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 
 project(livox_sdk2)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
 message(STATUS "main project dir: " ${PROJECT_SOURCE_DIR})
 
@@ -11,7 +11,7 @@ if (CMAKE_CROSSCOMPILING)
 		"PLEASE_FILL_OUT-FAILED_TO_RUN"
 		CACHE STRING "Result from TRY_RUN" FORCE)
 endif()
-
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function -Wno-unused-but-set-variable -Wno-unused-value -Wno-unused-local-typedefs -Wno-unused-private-field -Wno-deprecated-declarations -Wno-error=delete-non-abstract-non-virtual-dtor")
 if (UNIX)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 endif(UNIX)

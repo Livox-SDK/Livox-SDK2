@@ -48,7 +48,7 @@ namespace lidar {
 class HapCommandHandler : public CommandHandler {
  public:
   HapCommandHandler(DeviceManager* device_manager);
-  ~HapCommandHandler() {}
+  virtual ~HapCommandHandler() {}
   static HapCommandHandler& GetInstance();
   virtual bool Init(bool is_view);
 
@@ -77,6 +77,8 @@ class HapCommandHandler : public CommandHandler {
   bool IsStatusException(const Command &command);
   void QueryDiagnosisInfo(uint32_t handle);
   void OnLidarInfoChange(const Command &command);
+
+  
  private:
   std::unique_ptr<CommPort> comm_port_;
   std::mutex device_mutex_;

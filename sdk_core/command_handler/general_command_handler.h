@@ -63,6 +63,7 @@ class GeneralCommandHandler : public noncopyable {
   GeneralCommandHandler(const GeneralCommandHandler& other) = delete;
   GeneralCommandHandler& operator=(const GeneralCommandHandler& other) = delete;
  public:
+ 
   ~GeneralCommandHandler();
   void Destory();
   static GeneralCommandHandler& GetInstance();
