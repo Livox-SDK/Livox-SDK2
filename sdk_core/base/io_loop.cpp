@@ -52,7 +52,9 @@ bool IOLoop::Init() {
 }
 
 void IOLoop::Uninit() {
-  multiple_io_base_->PollDestroy();
+  if (multiple_io_base_) {
+    multiple_io_base_->PollDestroy();
+  }
 }
 
 void IOLoop::AddDelegate(socket_t sock, IOLoop::IOLoopDelegate *delegate, void *data) {
