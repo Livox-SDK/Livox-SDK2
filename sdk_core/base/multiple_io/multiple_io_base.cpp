@@ -43,7 +43,10 @@ void MultipleIOBase::CheckTimer() {
 void MultipleIOBase::WakeUpInit() {
   //Initialize wake up pipe
   wake_up_pipe_.reset(new WakeUpPipe());
-  wake_up_pipe_->PipeCreate();
+  if (!wake_up_pipe_->PipeCreate()) {
+    wake_up_pipe_ = nullptr;
+    return;
+  }
   //register wake_fd to multiple io
   PollFd wake_fd = {};
   wake_fd.fd = wake_up_pipe_->GetPipeOut();
@@ -65,11 +68,11 @@ void MultipleIOBase::WakeUpInit() {
 }
 
 void MultipleIOBase::WakeUpUninit() {
-  PollFd wake_fd = {};
-  wake_fd.fd = wake_up_pipe_->GetPipeOut();
-  wake_fd.event = READBLE_EVENT | WRITABLE_EVENT;
-  PollSetRemove(wake_fd);
   if (wake_up_pipe_) {
+    PollFd wake_fd = {};
+    wake_fd.fd = wake_up_pipe_->GetPipeOut();
+    wake_fd.event = READBLE_EVENT | WRITABLE_EVENT;
+    PollSetRemove(wake_fd);
     wake_up_pipe_->PipeDestroy();
     wake_up_pipe_ = nullptr;
   }

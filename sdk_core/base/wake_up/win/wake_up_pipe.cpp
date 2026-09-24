@@ -122,6 +122,7 @@ bool WakeUpPipe::PipeCreate() {
   if (!status) {
     if (pipe_in_ > 0) {
       closesocket(pipe_in_);
+      pipe_in_ = -1;
     }
     return false;
   }

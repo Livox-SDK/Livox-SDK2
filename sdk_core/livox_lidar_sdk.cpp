@@ -33,6 +33,7 @@
 #include "command_handler/general_command_handler.h"
 #include "data_handler/data_handler.h"
 #include "logger_handler/logger_manager.h"
+#include "debug_point_cloud_handler/debug_point_cloud_manager.h"
 #include "upgrade_manager.h"
 
 
@@ -93,10 +94,26 @@ bool LivoxLidarSdkInit(const char* path, const char* host_ip, const LivoxLidarLo
     }
 
     if (!DeviceManager::GetInstance().Init(lidars_cfg_ptr, custom_lidars_cfg_ptr, lidar_logger_cfg_ptr, sdk_framework_cfg_ptr)) {
+      // DeviceManager::Init() already rolled back its own sockets and
+      // threads; unwind the singletons that were initialized along the way.
+      LoggerManager::GetInstance().Destory();
+      GeneralCommandHandler::GetInstance().Destory();
+      DataHandler::GetInstance().Destory();
+      DebugPointCloudManager::GetInstance().Enable(false);
+#ifdef WIN32
+      WSACleanup();
+#endif // WIN32
       return false;
     }
   } else {
     if (!DeviceManager::GetInstance().Init(host_ip, log_cfg_info)) {
+      LoggerManager::GetInstance().Destory();
+      GeneralCommandHandler::GetInstance().Destory();
+      DataHandler::GetInstance().Destory();
+      DebugPointCloudManager::GetInstance().Enable(false);
+#ifdef WIN32
+      WSACleanup();
+#endif // WIN32
       return false;
     }
   }
@@ -111,15 +128,17 @@ void LivoxLidarSdkUninit() {
   }
 
   LoggerManager::GetInstance().Destory();
-  // The reason for using WSACleanup() after previous statement is that Destory() still needs to send socket messages.
-#ifdef WIN32
-    WSACleanup();
-#endif // WIN32
   DeviceManager::GetInstance().Destory();
+  DebugPointCloudManager::GetInstance().Enable(false);
   DataHandler::GetInstance().Destory();
   GeneralCommandHandler::GetInstance().Destory();
 
   UninitLogger();
+  // The reason for using WSACleanup() after previous statements is that the
+  // Destory() calls above still need to send and close socket messages.
+#ifdef WIN32
+    WSACleanup();
+#endif // WIN32
   is_initialized = false;
 }
 

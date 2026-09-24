@@ -39,6 +39,10 @@ class ThreadBase : public noncopyable {
   virtual void ThreadFunc() = 0;
   bool Start();
   bool IsQuit() { return quit_; }
+  // Signals the thread to quit without joining it, for the case where
+  // teardown is invoked from the thread's own callback.
+  void Stop() { quit_ = true; }
+  bool IsSelf() { return thread_ && thread_->get_id() == std::this_thread::get_id(); }
 
  protected:
   void Join();
