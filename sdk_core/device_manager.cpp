@@ -79,37 +79,43 @@ bool DeviceManager::Init(const std::string& host_ip, const LivoxLidarLoggerCfgIn
     
     if(!DebugPointCloudManager::GetInstance().SetStorePath(lidar_logger_cfg_ptr->lidar_log_path)) {
       LOG_ERROR("Set the debug point cloud file storage path failed.");
+      Destory();
       return false;
     }
   }
 
   if (!LoggerManager::GetInstance().Init(lidar_logger_cfg_ptr)) {
     LOG_ERROR("Logger manager init failed.");
+    Destory();
     return false;
   }
 
   if (!GeneralCommandHandler::GetInstance().Init(host_ip ,is_view_, this)) {
     LOG_ERROR("General command handle init failed.");
+    Destory();
     return false;
   }
 
   if (!DataHandler::GetInstance().Init()) {
     LOG_ERROR("Data handle init failed.");
+    Destory();
     return false;
   }
 
   if (!CreateIOThread()) {
     LOG_ERROR("Create IO thread failed.");
+    Destory();
     return false;
   }
 
   if (!CreateDetectionChannel()) {
     LOG_ERROR("Create detection channel failed.");
+    Destory();
     return false;
   }
 
-  detection_thread_ = std::make_shared<std::thread>(&DeviceManager::DetectionLidars, this);
   is_stop_detection_.store(false);
+  detection_thread_ = std::make_shared<std::thread>(&DeviceManager::DetectionLidars, this);
   return true;
 }
 
@@ -129,32 +135,38 @@ bool DeviceManager::Init(std::shared_ptr<std::vector<LivoxLidarCfg>>& lidars_cfg
     detection_host_ip_ = custom_lidars_cfg_ptr->at(0).host_net_info.host_ip;
   } else {
     LOG_ERROR("Device manager init failed, can not find cmd host ip.");
+    Destory();
     return false;
   }
   comm_port_.reset(new CommPort());
-  
+
   if (!lidar_logger_cfg_ptr) {
     LOG_ERROR("lidar_logger_cfg_ptr is nullptr.");
+    Destory();
     return false;
   }
 
   if (!DebugPointCloudManager::GetInstance().SetStorePath(lidar_logger_cfg_ptr->lidar_log_path)) {
     LOG_ERROR("Set the debug point cloud file storage path failed.");
+    Destory();
     return false;
   }
 
   if (!LoggerManager::GetInstance().Init(lidar_logger_cfg_ptr)) {
     LOG_ERROR("Logger manager init failed.");
+    Destory();
     return false;
   }
 
   if (!GeneralCommandHandler::GetInstance().Init(custom_lidars_cfg_ptr, this)) {
     LOG_ERROR("General command handle init failed.");
+    Destory();
     return false;
   }
 
   if (!DataHandler::GetInstance().Init()) {
     LOG_ERROR("Data handle init failed.");
+    Destory();
     return false;
   }
 
@@ -162,17 +174,19 @@ bool DeviceManager::Init(std::shared_ptr<std::vector<LivoxLidarCfg>>& lidars_cfg
 
   if (!CreateIOThread()) {
     LOG_ERROR("Create IO thread failed.");
+    Destory();
     return false;
   }
 
   if (!CreateChannel()) {
     LOG_ERROR("Create channel failed.");
+    Destory();
     return false;
   }
 
   if (!(lidars_cfg_ptr_->empty()) || !(custom_lidars_cfg_ptr->empty())) {
-    detection_thread_ = std::make_shared<std::thread>(&DeviceManager::DetectionLidars, this);
     is_stop_detection_.store(false);
+    detection_thread_ = std::make_shared<std::thread>(&DeviceManager::DetectionLidars, this);
   }
 
   LOG_INFO("Init livox lidars succ.");
@@ -822,35 +836,45 @@ bool DeviceManager::GetLoggerCmdChannel(const uint8_t dev_type, const uint32_t h
 }
 
 void DeviceManager::Destory() {
-  detection_host_ip_ = "";
+  // The detection thread sends on detection_socket_, so it must be joined
+  // before any socket is closed.
+  is_stop_detection_.store(true);
+  if (detection_thread_) {
+    detection_thread_->join();
+    detection_thread_ = nullptr;
+  }
+
+  // Resetting the io threads joins them and destroys their poll loops,
+  // which drops every registered delegate along with the loop. A thread
+  // cannot join itself: if Destory() is invoked from an io thread's own
+  // callback, that thread is only signalled to quit and is joined later
+  // when the DeviceManager singleton is destroyed.
+  if (detection_io_thread_ && detection_io_thread_->IsSelf()) {
+    detection_io_thread_->Stop();
+  } else {
+    detection_io_thread_.reset();
+  }
+
+  if (cmd_io_thread_ && cmd_io_thread_->IsSelf()) {
+    cmd_io_thread_->Stop();
+  } else {
+    cmd_io_thread_.reset();
+  }
+
+  if (data_io_thread_ && data_io_thread_->IsSelf()) {
+    data_io_thread_->Stop();
+  } else {
+    data_io_thread_.reset();
+  }
 
   if (detection_socket_ > 0) {
-    detection_io_thread_->GetLoop().lock()->RemoveDelegate(detection_socket_, this);
+    util::CloseSock(detection_socket_);
+    detection_socket_ = -1;
   }
 
   if (detection_broadcast_socket_ > 0) {
-    detection_io_thread_->GetLoop().lock()->RemoveDelegate(detection_broadcast_socket_, this);
-  }
-
-  for (auto it = command_channel_.begin(); it != command_channel_.end(); ++it) {
-    socket_t sock = *it;
-    if (sock > 0) {
-      cmd_io_thread_->GetLoop().lock()->RemoveDelegate(sock, this);
-    }
-  }
-
-  for (auto it = vec_broadcast_socket_.begin(); it != vec_broadcast_socket_.end(); ++it) {
-    socket_t sock = *it;
-    if (sock > 0) {
-      cmd_io_thread_->GetLoop().lock()->RemoveDelegate(sock, this);
-    }
-  }
-  
-  for (auto it = data_channel_.begin(); it != data_channel_.end(); ++it) {
-    socket_t sock = *it;
-    if (sock > 0) {
-      data_io_thread_->GetLoop().lock()->RemoveDelegate(sock, this);
-    }
+    util::CloseSock(detection_broadcast_socket_);
+    detection_broadcast_socket_ = -1;
   }
 
   for (socket_t& sock : socket_vec_) {
@@ -864,22 +888,6 @@ void DeviceManager::Destory() {
     sock = -1;
   }
   vec_broadcast_socket_.clear();
-
-  if (detection_thread_) {
-    is_stop_detection_.store(true);
-    detection_thread_->join();
-    detection_thread_ = nullptr;
-
-    if (detection_socket_ > 0) {
-      util::CloseSock(detection_socket_);
-      detection_socket_ = -1;
-    }
-
-    if (detection_broadcast_socket_ > 0) {
-      util::CloseSock(detection_broadcast_socket_);
-      detection_broadcast_socket_ = -1;
-    }
-  }
 
   lidars_cfg_ptr_ = nullptr;
   custom_lidars_cfg_ptr_ = nullptr;
@@ -895,8 +903,6 @@ void DeviceManager::Destory() {
 
   comm_port_.reset(nullptr);
 
-  is_stop_detection_.store(true);
-
   {
     std::lock_guard<std::mutex> lock(lidars_dev_type_mutex_);
     lidars_dev_type_.clear();
@@ -904,7 +910,7 @@ void DeviceManager::Destory() {
 
   is_view_ = false;
   detection_host_ip_ = "";
-  
+
   {
     std::lock_guard<std::mutex> lock(view_device_mutex_);
     view_devices_.clear();
