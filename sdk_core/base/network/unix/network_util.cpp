@@ -85,6 +85,13 @@ socket_t CreateSocket(uint16_t port, bool nonblock, bool reuse_port, bool is_bro
       servaddr.sin_addr.s_addr = inet_addr(netif.c_str());
     }
   }
+#if defined(__APPLE__)
+  // Darwin rejects bind() to a broadcast destination; receive broadcasts on ANY.
+  // Host-specific sockets remain bound to their interface IP for outgoing packets.
+  if (servaddr.sin_addr.s_addr == INADDR_BROADCAST) {
+    servaddr.sin_addr.s_addr = INADDR_ANY;
+  }
+#endif
   servaddr.sin_port = htons(port);
 
   status = bind(sock, (const struct sockaddr *)&servaddr, sizeof(servaddr));
